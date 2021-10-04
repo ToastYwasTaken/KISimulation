@@ -21,9 +21,10 @@ public class Enemy : MonoBehaviour
         //Initialize FSM
         myFSMState = anim.GetBehaviour<FSM>();
         myFSMState.SetGO(this.gameObject);
-        rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        //Change state to PATROL
+        //Set Rigidbody
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeAll;
        
     }
 
@@ -39,7 +40,6 @@ public class Enemy : MonoBehaviour
     {
         //Change state to IDLE
         myFSMState = anim.GetBehaviour<FSM_IDLE>();
-        rb = GetComponent<Rigidbody>();
         //Freeze Rigidbody
     }
 

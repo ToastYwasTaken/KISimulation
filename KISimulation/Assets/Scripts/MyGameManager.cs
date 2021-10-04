@@ -37,15 +37,18 @@ public class MyGameManager : MonoBehaviour
     public void SpawnEnemy()
     {
         //Don't spawn more than 10 enemies
-        if(enemiesList.Count >= 10)
+        if (enemiesList.Count >= 10)
         {
             return;
         }
-        randomSpawnpointRef.GenerateRandomSpawnPoint();
-        randomRotationRef.GenerateRandomSpawnRotation();
-        Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
-        Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
-        enemiesList.Add(enemyPrefab);
+        else
+        {
+            randomSpawnpointRef.GenerateRandomSpawnPoint();
+            randomRotationRef.GenerateRandomSpawnRotation();
+            Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
+            Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
+            enemiesList.Add(enemyPrefab);
+        }
     }
     
     

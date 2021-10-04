@@ -36,15 +36,23 @@ public class RandomSpawnpoint : MonoBehaviour
 
         Debug.Log("xRandom: " + randomPositionX + " yRelative: " + positionY + " zRandom: " + randomPositionZ);
 
+        Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
+
         //Check if there is something already on the desired spawnposition
-        if (Physics.CheckCapsule(new Vector3(randomPositionX, 0f, randomPositionZ), new Vector3(randomPositionX, 2f, randomPositionZ), maxRadiusToCheck))
+        if (Physics.CheckSphere(desiredSpawnPosition, maxRadiusToCheck))
         {
-            spawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
+            spawnPosition = desiredSpawnPosition;
             Debug.Log("Spawn Pos: " + spawnPosition);
             spawnPointsList.Add(spawnPosition);
         }
         else return;
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(spawnPosition, maxRadiusToCheck);
     }
 
 }
