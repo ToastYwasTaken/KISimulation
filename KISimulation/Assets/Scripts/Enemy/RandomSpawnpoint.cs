@@ -4,42 +4,59 @@ using UnityEngine;
 
 public class RandomSpawnpoint : MonoBehaviour
 {
-
+    #region Vectors
     private Vector3 spawnPosition;
+    private Vector3 cornerTopLeft;
+    private Vector3 cornerTopRight;
+    private Vector3 cornerBottomLeft;
+    private Vector3 platformCentre;
+    #endregion
+
     [SerializeField]
     private GameObject groundReference;
 
     private List<Vector3> spawnPointsList = new List<Vector3>();
 
-    private const float maxRadiusToCheck = 5f;
+    private float maxRadiusToCheck = 0f;    //assigned later
 
+    private const float offset = 0.2f;
+    private int currentScaleX;
+    private int currentScaleZ;
     public Vector3 SpawnPosition { get => spawnPosition; }
 
-    public void GenerateRandomSpawnPoint()
+    private void Awake()
     {
-        //TODO: check if other object is there already
+        platformCentre = groundReference.transform.position;
 
         //Get corners of plane
 
-        Vector3 cornerTopLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[0];
-        Vector3 cornerTopRight = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[10];
-        Vector3 cornerBottomLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[110];
-        //Vector3 cornerBottomRight = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[120];
+        currentScaleX = (int)groundReference.transform.localScale.x;
+        currentScaleZ = (int)groundReference.transform.localScale.z;
+
+        cornerTopLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[0];
+        cornerTopRight = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[10];
+        cornerBottomLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[110];
 
         Debug.Log("Top left corner: " + cornerTopLeft + " Top right corner: " + cornerTopRight + " Bottom left corner: " + cornerBottomLeft);
 
-        //Generate spawn points - only y is always the same (slightly above the ground)
+        //assign correct radiusToCheck 
 
-        float randomPositionX = Random.Range(cornerTopLeft.x, cornerTopRight.x);
-        float positionY = groundReference.transform.position.y + 1f;
-        float randomPositionZ = Random.Range(cornerTopLeft.z, cornerBottomLeft.z);
+        maxRadiusToCheck = cornerTopLeft.x*currentScaleX - cornerTopRight.x*currentScaleX;
+    }
+    public void GenerateRandomSpawnPoint()
+    {
+        //Generate spawn points
+        //x and z are randomly calculated with offsets
+        //y is always the same position 
 
-        Debug.Log("xRandom: " + randomPositionX + " yRelative: " + positionY + " zRandom: " + randomPositionZ);
-
+        int randomPositionX = (int)Random.Range(((cornerTopLeft.x*currentScaleX)-offset), ((cornerTopRight.x*currentScaleX)+offset));
+        int positionY = (int)groundReference.transform.position.y + 1;
+        int randomPositionZ = (int)Random.Range(((cornerTopLeft.z*currentScaleZ)-offset), ((cornerBottomLeft.z*currentScaleZ)+offset));
+        
         Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
 
-        //Check if there is something already on the desired spawnposition
-        if (Physics.CheckSphere(desiredSpawnPosition, maxRadiusToCheck))
+        //ignores layer 6: Ground for spawning
+        if (!Physics.CheckSphere(platformCentre, maxRadiusToCheck, 6))
         {
             spawnPosition = desiredSpawnPosition;
             Debug.Log("Spawn Pos: " + spawnPosition);
@@ -52,7 +69,7 @@ public class RandomSpawnpoint : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(spawnPosition, maxRadiusToCheck);
+        Gizmos.DrawSphere(platformCentre, maxRadiusToCheck);
     }
 
 }

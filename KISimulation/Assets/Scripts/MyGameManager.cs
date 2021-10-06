@@ -16,6 +16,8 @@ public class MyGameManager : MonoBehaviour
 
     [SerializeField]
     RandomRotation randomRotationRef;
+    [SerializeField]
+    int maxEnemyCount;
 
     private void Awake()
     {
@@ -37,7 +39,7 @@ public class MyGameManager : MonoBehaviour
     public void SpawnEnemy()
     {
         //Don't spawn more than 10 enemies
-        if (enemiesList.Count >= 10)
+        if (enemiesList.Count >= maxEnemyCount)
         {
             return;
         }

@@ -8,12 +8,13 @@ public class PlayerManager : MonoBehaviour
     float playerSpeed;
     [SerializeField]
     CharacterController playerController;
+    private Vector3 playerPosition;
 
+    public Vector3 PlayerPosition { get => playerPosition; }
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        playerPosition = transform.position;   
     }
 
     // Update is called once per frame
@@ -25,6 +26,8 @@ public class PlayerManager : MonoBehaviour
 
     private void MovePlayer()
     {
+
+        playerPosition = transform.position;
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 

@@ -25,22 +25,23 @@ public class Enemy : MonoBehaviour
         //Set Rigidbody
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
+
+        Idle();
+
        
     }
 
     private void Update()
     {
-        if (true)
-        {
 
-        }
     }
 
     private void Idle()
     {
-        //Change state to IDLE
-        myFSMState = anim.GetBehaviour<FSM_IDLE>();
-        //Freeze Rigidbody
+        //Set delay before spawning
+        StartCoroutine("Delay");
+        //Set state
+        anim.SetBool("enemySpawned", true);
     }
 
     private void Patrol()
@@ -53,6 +54,9 @@ public class Enemy : MonoBehaviour
 
     }
 
-
+    private IEnumerator Delay()
+    {
+        yield return new WaitForSeconds(3f);
+    }
 
 }

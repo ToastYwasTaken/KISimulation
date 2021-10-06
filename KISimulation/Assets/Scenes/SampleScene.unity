@@ -462,7 +462,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 828325377}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.088, z: 0}
+  m_LocalPosition: {x: -0.1, y: 1.088, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1138955376}
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 828325377}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e79862ab14c578e469b9387a5f4e92df, type: 3}
   m_Name: 
@@ -549,6 +549,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 4789126657890224995, guid: 1e5cda656df6f0d45a4e63184e63527e, type: 3}
   randomSpawnpointRef: {fileID: 495238540}
   randomRotationRef: {fileID: 144627875}
+  maxEnemyCount: 20
 --- !u!4 &929537678
 Transform:
   m_ObjectHideFlags: 0
@@ -768,7 +769,7 @@ GameObject:
   - component: {fileID: 1299264145}
   - component: {fileID: 1299264144}
   - component: {fileID: 1299264143}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -847,7 +848,7 @@ Transform:
   m_GameObject: {fileID: 1299264142}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 1, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
