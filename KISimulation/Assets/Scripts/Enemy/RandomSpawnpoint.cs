@@ -1,7 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/******************************************************************************
+ * Project: KISimulation
+ * File: RandomSpawnpoint.cs
+ * Version: 1.01
+ * Autor:  Franz Mörike (FM);
+ * 
+ * 
+ * These coded instructions, statements, and computer programs contain
+ * proprietary information of the author and are protected by Federal
+ * copyright law. They may not be disclosed to third parties or copied
+ * or duplicated in any form, in whole or in part, without the prior
+ * written consent of the author.
+ * 
+ * ChangeLog
+ * ----------------------------
+ *  07.10.2021  created
+ *  
+ *****************************************************************************/
 public class RandomSpawnpoint : MonoBehaviour
 {
     #region Vectors
@@ -55,14 +72,23 @@ public class RandomSpawnpoint : MonoBehaviour
         
         Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
 
-        //ignores layer 6: Ground for spawning
-        if (!Physics.CheckSphere(platformCentre, maxRadiusToCheck, 6))
+        //Check if the spawnposition is already taken
+        if (spawnPointsList.Contains(desiredSpawnPosition))
         {
-            spawnPosition = desiredSpawnPosition;
-            Debug.Log("Spawn Pos: " + spawnPosition);
-            spawnPointsList.Add(spawnPosition);
+            GenerateRandomSpawnPoint();
         }
-        else return;
+        else
+        {
+
+            //ignores layer 6: Ground for spawning
+            if (!Physics.CheckSphere(platformCentre, maxRadiusToCheck, 6))
+            {
+                spawnPosition = desiredSpawnPosition;
+                Debug.Log("Spawn Pos: " + spawnPosition);
+                spawnPointsList.Add(spawnPosition);
+            }
+            else return;
+        }
 
     }
 

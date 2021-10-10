@@ -3,10 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/******************************************************************************
+ * Project: KISimulation
+ * File: MyGameManager.cs
+ * Version: 1.01
+ * Autor:  Franz Mörike (FM);
+ * 
+ * 
+ * These coded instructions, statements, and computer programs contain
+ * proprietary information of the author and are protected by Federal
+ * copyright law. They may not be disclosed to third parties or copied
+ * or duplicated in any form, in whole or in part, without the prior
+ * written consent of the author.
+ * 
+ * ChangeLog
+ * ----------------------------
+ *  05.10.2021  created
+ *  10.10.2021  changed enemiesInstantiatedList to .Arr 
+ *              added Remove() method
+ *  
+ *****************************************************************************/
 public class MyGameManager : MonoBehaviour
 {
 
-    private List<GameObject> enemiesInstantiatedList = new List<GameObject>();
+    private GameObject [] enemiesInstantiatedArr;
 
     [SerializeField]
     GameObject enemyPrefab;
@@ -21,18 +41,13 @@ public class MyGameManager : MonoBehaviour
 
 
     private GameObject currentInstantiatedObject;
+    private int pointer;
 
     private void Awake()
     {
         currentInstantiatedObject = null;
+        enemiesInstantiatedArr = new GameObject[maxEnemyCount];
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -41,29 +56,37 @@ public class MyGameManager : MonoBehaviour
 
     public void SpawnEnemy()
     {
-        //Don't spawn more than 10 enemies
-        if (enemiesInstantiatedList.Count >= maxEnemyCount)
+        //Don't spawn more than maxEnemyCount enemies
+        if (pointer >= maxEnemyCount)
         {
             return;
         }
         else
         {
+            //Set random Spawnpoints and random Rotation
             randomSpawnpointRef.GenerateRandomSpawnPoint();
             randomRotationRef.GenerateRandomSpawnRotation();
+            //Instantiate the Prefab
             currentInstantiatedObject = Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
-            Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
-            enemiesInstantiatedList.Add(currentInstantiatedObject);
+            //Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
+            //Safe the instantiated GO in the array
+            enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
+            //increasing pointer when adding something to the array
+            pointer++;
         }
     }
 
     public void RemoveEnemy()
     {
-        if(enemiesInstantiatedList.Count == 0)
+        //Don't remove out of empty list
+        if(pointer == 0)
         {
             return;
-        }
-        enemiesInstantiatedList.RemoveAt(enemiesInstantiatedList.Count - 1);
-        Destroy(currentInstantiatedObject);
+        }else
+            //decrement pointer before Destroying the GO at that position
+        Destroy(enemiesInstantiatedArr[--pointer]);
+        //override reference in array to null
+        enemiesInstantiatedArr[pointer] = null;
     }
     
     
