@@ -38,14 +38,14 @@ public class Enemy : MonoBehaviour
 
     private void Idle()
     {
-        //Set delay before spawning
-        StartCoroutine("Delay");
         //Set state
-        anim.SetBool("enemySpawned", true);
+        anim.SetBool("playerInReach", true);
     }
 
     private void Patrol()
     {
+        //Set delay before patroling
+        StartCoroutine("Delay");
 
     }
 

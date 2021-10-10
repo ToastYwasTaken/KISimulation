@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MyGameManager : MonoBehaviour
 {
 
-    private List<GameObject> enemiesList = new List<GameObject>();
+    private List<GameObject> enemiesInstantiatedList = new List<GameObject>();
 
     [SerializeField]
     GameObject enemyPrefab;
@@ -19,9 +19,12 @@ public class MyGameManager : MonoBehaviour
     [SerializeField]
     int maxEnemyCount;
 
+
+    private GameObject currentInstantiatedObject;
+
     private void Awake()
     {
-
+        currentInstantiatedObject = null;
     }
 
     // Start is called before the first frame update
@@ -39,7 +42,7 @@ public class MyGameManager : MonoBehaviour
     public void SpawnEnemy()
     {
         //Don't spawn more than 10 enemies
-        if (enemiesList.Count >= maxEnemyCount)
+        if (enemiesInstantiatedList.Count >= maxEnemyCount)
         {
             return;
         }
@@ -47,10 +50,20 @@ public class MyGameManager : MonoBehaviour
         {
             randomSpawnpointRef.GenerateRandomSpawnPoint();
             randomRotationRef.GenerateRandomSpawnRotation();
-            Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
+            currentInstantiatedObject = Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
             Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
-            enemiesList.Add(enemyPrefab);
+            enemiesInstantiatedList.Add(currentInstantiatedObject);
         }
+    }
+
+    public void RemoveEnemy()
+    {
+        if(enemiesInstantiatedList.Count == 0)
+        {
+            return;
+        }
+        enemiesInstantiatedList.RemoveAt(enemiesInstantiatedList.Count - 1);
+        Destroy(currentInstantiatedObject);
     }
     
     
