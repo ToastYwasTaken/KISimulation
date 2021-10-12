@@ -26,13 +26,17 @@ public class PlayerManager : MonoBehaviour
     float playerSpeed;
     [SerializeField]
     CharacterController playerController;
-    private Vector3 playerPosition;
 
-    public Vector3 PlayerPosition { get => playerPosition; }
+    #region Rotation
+    private Vector3 playerPos;
+    private Vector3 mousePos;
+    #endregion
+
+    public Vector3 PlayerPosition { get => playerPos; }
 
     void Awake()
     {
-        playerPosition = transform.position;   
+        playerPos = transform.position;
     }
 
     // Update is called once per frame
@@ -44,8 +48,6 @@ public class PlayerManager : MonoBehaviour
 
     private void MovePlayer()
     {
-
-        playerPosition = transform.position;
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -55,21 +57,27 @@ public class PlayerManager : MonoBehaviour
 
     private void RotatePlayer()
     {
-        float targetMousePositionX = Input.mousePosition.x - transform.position.x;
-        float targetMousePositionZ = Input.mousePosition.z - transform.position.z;
-
-        //calculate angle between mouseposition and playerposition
-        Vector3 targetVector = new Vector3(targetMousePositionX, 0f, targetMousePositionZ);
-        float angle = Vector3.Angle(targetVector, transform.forward);
-
-        //calculate final rotation
-        transform.localRotation = Quaternion.Euler(new Vector3(0f, angle, 0f));
+        //Ray from Camera to mousePos
+        Ray rayCamToGround = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if(Physics.Raycast(rayCamToGround, out RaycastHit rayHitsGround))
+        {
+            //calculate pos of mouse
+            mousePos = rayHitsGround.point;
+            //calculate distance between player and mouse
+            Vector3 distancePlayerToMouse = mousePos - playerPos;
+            //set y to 0, otherwise it rotates around y
+            distancePlayerToMouse.y = 0;
+            //Calculate and set rotation
+            Quaternion rotation = Quaternion.LookRotation(distancePlayerToMouse);
+            transform.rotation = rotation;
+        }
+        
     }
 
     private void OnDrawGizmos()
     {
         //Draw Line between mouse and playerposition (Debug)
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(new Vector2(Input.mousePosition.x, Input.mousePosition.z), new Vector2(transform.position.x, transform.position.z));
+        Gizmos.DrawLine(playerPos, mousePos);
     }
 }

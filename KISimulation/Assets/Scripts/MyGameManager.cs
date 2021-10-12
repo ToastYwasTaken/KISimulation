@@ -32,10 +32,8 @@ public class MyGameManager : MonoBehaviour
     GameObject enemyPrefab;
 
     [SerializeField]
-    RandomSpawnpoint randomSpawnpointRef;
+    GameObject groundRef;
 
-    [SerializeField]
-    RandomRotation randomRotationRef;
     [SerializeField]
     int maxEnemyCount;
 
@@ -64,11 +62,12 @@ public class MyGameManager : MonoBehaviour
         else
         {
             //Set random Spawnpoints and random Rotation
-            randomSpawnpointRef.GenerateRandomSpawnPoint();
-            randomRotationRef.GenerateRandomSpawnRotation();
+            RandomSpawnpoint spawnPoint = groundRef.GetComponent<RandomSpawnpoint>();
+            RandomRotation spawnRotation = groundRef.GetComponent<RandomRotation>();
+            spawnPoint.GenerateRandomSpawnPoint();
+            spawnRotation.GenerateRandomSpawnRotation();
             //Instantiate the Prefab
-            currentInstantiatedObject = Instantiate(enemyPrefab, randomSpawnpointRef.SpawnPosition, randomRotationRef.SpawnRotation);
-            //Debug.Log("Spawn Pos: " + randomSpawnpointRef.SpawnPosition + " SpawnRotation: " + randomRotationRef.SpawnRotation);
+            currentInstantiatedObject = Instantiate(enemyPrefab, spawnPoint.SpawnPosition, spawnRotation.SpawnRotation);
             //Safe the instantiated GO in the array
             enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
             //increasing pointer when adding something to the array

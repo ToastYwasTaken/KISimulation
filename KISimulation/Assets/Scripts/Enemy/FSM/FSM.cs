@@ -42,6 +42,11 @@ public class FSM : StateMachineBehaviour
         gameObject = _gameObject;
     }
 
+    public void SetNavMeshAgent(NavMeshAgent _navMeshAgent)
+    {
+        navMeshAgent = _navMeshAgent;
+    }
+
     //Called when entering state
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {

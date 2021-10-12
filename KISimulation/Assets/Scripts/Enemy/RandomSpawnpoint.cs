@@ -37,6 +37,7 @@ public class RandomSpawnpoint : MonoBehaviour
     private float maxRadiusToCheck = 0f;    //assigned later
 
     private const float offset = 0.2f;
+    //currentScale is used for non square ground
     private int currentScaleX;
     private int currentScaleZ;
     public Vector3 SpawnPosition { get => spawnPosition; }
@@ -45,11 +46,11 @@ public class RandomSpawnpoint : MonoBehaviour
     {
         platformCentre = groundReference.transform.position;
 
-        //Get corners of plane
-
+        //current Scale of ground
         currentScaleX = (int)groundReference.transform.localScale.x;
         currentScaleZ = (int)groundReference.transform.localScale.z;
 
+        //Get corners of plane
         cornerTopLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[0];
         cornerTopRight = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[10];
         cornerBottomLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[110];
@@ -57,7 +58,6 @@ public class RandomSpawnpoint : MonoBehaviour
         Debug.Log("Top left corner: " + cornerTopLeft + " Top right corner: " + cornerTopRight + " Bottom left corner: " + cornerBottomLeft);
 
         //assign correct radiusToCheck 
-
         maxRadiusToCheck = cornerTopLeft.x*currentScaleX - cornerTopRight.x*currentScaleX;
     }
     public void GenerateRandomSpawnPoint()
