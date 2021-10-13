@@ -57,6 +57,8 @@ public class PlayerManager : MonoBehaviour
 
     private void RotatePlayer()
     {
+        //Update playerPos
+        playerPos = transform.position;
         //Ray from Camera to mousePos
         Ray rayCamToGround = Camera.main.ScreenPointToRay(Input.mousePosition);
         if(Physics.Raycast(rayCamToGround, out RaycastHit rayHitsGround))
@@ -76,8 +78,11 @@ public class PlayerManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //Draw Line between mouse and playerposition (Debug)
+        //DEBUG | Draw Line between mouse and playerposition 
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(playerPos, mousePos);
+        //DEBUG | Draw Ray between cam and mouseposition
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(Camera.main.transform.position, mousePos);
     }
 }

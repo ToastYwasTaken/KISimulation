@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /******************************************************************************
  * Project: KISimulation
@@ -36,6 +37,9 @@ public class MyGameManager : MonoBehaviour
 
     [SerializeField]
     int maxEnemyCount;
+
+    [SerializeField]
+    TextMeshProUGUI textEnemies;
 
 
     private GameObject currentInstantiatedObject;
@@ -72,6 +76,7 @@ public class MyGameManager : MonoBehaviour
             enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
             //increasing pointer when adding something to the array
             pointer++;
+            AdjustEnemyCounter();
         }
     }
 
@@ -86,8 +91,13 @@ public class MyGameManager : MonoBehaviour
         Destroy(enemiesInstantiatedArr[--pointer]);
         //override reference in array to null
         enemiesInstantiatedArr[pointer] = null;
+        AdjustEnemyCounter();
     }
     
+    private void AdjustEnemyCounter()
+    {
+        textEnemies.text = "Enemies: " + pointer.ToString();
+    }
     
     
 }
