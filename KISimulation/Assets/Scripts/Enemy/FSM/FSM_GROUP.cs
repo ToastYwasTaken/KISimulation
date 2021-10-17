@@ -21,10 +21,14 @@ using UnityEngine;
  *****************************************************************************/
 public class FSM_GROUP : FSM
 {
+    [SerializeField]
+    BoidManager boidManager;
 
+    
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        //GROUP BEHAVIOUR
+        
     }
 }

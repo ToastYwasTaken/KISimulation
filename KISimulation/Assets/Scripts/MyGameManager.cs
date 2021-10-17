@@ -83,15 +83,18 @@ public class MyGameManager : MonoBehaviour
     public void RemoveEnemy()
     {
         //Don't remove out of empty list
-        if(pointer == 0)
+        if (pointer == 0)
         {
             return;
-        }else
+        }
+        else
+        {
             //decrement pointer before Destroying the GO at that position
-        Destroy(enemiesInstantiatedArr[--pointer]);
-        //override reference in array to null
-        enemiesInstantiatedArr[pointer] = null;
-        AdjustEnemyCounter();
+            Destroy(enemiesInstantiatedArr[--pointer]);
+            //override reference in array to null
+            enemiesInstantiatedArr[pointer] = null;
+            AdjustEnemyCounter();
+        }
     }
     
     private void AdjustEnemyCounter()

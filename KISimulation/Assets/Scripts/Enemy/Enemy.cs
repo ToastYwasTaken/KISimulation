@@ -30,6 +30,21 @@ public class Enemy : MonoBehaviour
 
     private FSM myFSMState;
 
+    private bool isGrouped;
+
+    float speedMultiplier, maxVelocity;
+
+    #region BOIDS
+    [SerializeField]
+    BoidManager boidManager;
+
+    List<Enemy> enemyBoids;
+
+    private float cohesionRadius, alignmentRadius, separationRadius;
+    private float cohesionForce, alignmentForce, separationForce, targetForce;
+    #endregion
+    public bool IsGrouped { get => true; set => isGrouped = value; }
+    public Vector3 Velocity { get => rb.velocity; }
 
     private void Awake()
     {
@@ -43,32 +58,162 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
+
+        //assign boids
+        boidManager = GameObject.FindGameObjectWithTag("BoidManager").GetComponent<BoidManager>();
+        float radius = transform.localScale.x / 2f;
+        cohesionRadius = radius * radius * 2f;
+        alignmentRadius = radius * radius * 2f;
+        separationRadius = radius * radius * radius;
+        cohesionForce = boidManager.CohesionForce;
+        alignmentForce = boidManager.AlignmentForce;
+        separationForce = boidManager.SeparationForce;
+        targetForce = boidManager.TargetForce;
+
         Idle();
 
        
     }
 
-    private void Update()
-    {
 
+    public void ApplyBoidsMovement()
+    {
+        Vector3 target = CalculateTarget(boidManager.PlayerPos);
+        Vector3 separation = CalculateSeparation();
+        Vector3 cohesion = CalculateCohesion();
+        Vector3 alignment = CalculateAlignment();
+
+        Vector3 totalForce = separation * separationForce + cohesion * cohesionForce + alignment * alignmentForce + target * targetForce;
+        rb.AddForce(totalForce);
+    }
+
+    private Vector3 CalculateTarget(Vector3 _playerPos)
+    {
+        Vector3 target = (_playerPos - transform.position).normalized * speedMultiplier;
+        target -= rb.velocity;
+        if(target.magnitude > maxVelocity)
+        {
+            target = target.normalized * maxVelocity;
+        }
+        return target;
+    }
+
+    private Vector3 CalculateSeparation()
+    {
+        Vector3 separation = Vector3.zero;
+        int numberOfBoidsTooClose = 0;
+        for (int i = 0; i < enemyBoids.Count; i++)
+        {
+            //assign the enemies in state group which are next to each other
+            Enemy neighbour = enemyBoids[i];
+            Vector3 tempSeparation = transform.position - neighbour.transform.position;
+            float distance = tempSeparation.magnitude;
+            //calculate separation if near to another enemy
+            if(distance > 0f && distance < separationRadius)
+            {
+                tempSeparation.Normalize();
+                tempSeparation /= distance;
+                separation += tempSeparation;
+                numberOfBoidsTooClose++;
+            }
+        }
+        //separating enemies if needed
+        if (numberOfBoidsTooClose > 0)
+        {
+            Vector3 separationAvg = separation / numberOfBoidsTooClose;
+            separationAvg = separationAvg.normalized * speedMultiplier;
+            Vector3 target = separationAvg - rb.velocity;
+            if (target.magnitude > maxVelocity)
+            {
+                target = target.normalized * maxVelocity;
+            }
+            return target;
+        }
+        return separation;
+    }
+
+    private Vector3 CalculateAlignment()
+    {
+        Vector3 alignment = Vector3.zero;
+        int numberOfBoidsTooClose = 0;
+        for(int i = 0; i < enemyBoids.Count; i++)
+        {
+            Enemy neighbour = enemyBoids[i];
+            Vector3 separation = transform.position - neighbour.transform.position;
+            float distance = separation.magnitude;
+            if (distance > 0f && distance < alignmentRadius)
+            {
+                alignment += neighbour.Velocity.normalized;
+                numberOfBoidsTooClose++;
+            }
+        }
+        if(numberOfBoidsTooClose > 0)
+        {
+            Vector3 alignmentAvg = alignment / numberOfBoidsTooClose;
+            Vector3 target = alignmentAvg.normalized * speedMultiplier;
+            if(target.magnitude > maxVelocity)
+            {
+                alignmentAvg = alignmentAvg.normalized * maxVelocity;
+            }
+            return alignmentAvg;
+        }
+        return alignment;
+    }
+
+    private Vector3 CalculateCohesion()
+    {
+        Vector3 cohesion = Vector3.zero;
+        int numberOfBoidsTooClose = 0;
+        for (int i = 0; i < enemyBoids.Count; i++)
+        {
+            Enemy neighbour = enemyBoids[i];
+            Vector3 separation = transform.position - neighbour.transform.position;
+            float distance = separation.magnitude;
+            if (distance > 0f && distance < cohesionRadius)
+            {
+                cohesion += neighbour.transform.position;
+                numberOfBoidsTooClose++;
+            }
+        }
+        if (numberOfBoidsTooClose > 0)
+        {
+            Vector3 cohesionAvg = cohesion / numberOfBoidsTooClose;
+            return CalculateTarget(cohesionAvg);
+        }
+        return cohesion;
     }
 
     private void Idle()
     {
-        //Set state
-        anim.SetBool("playerInReach", true);
+        
     }
 
     private void Patrol()
     {
         //Set delay before patroling
         StartCoroutine("Delay");
-
+        //Set state
+        anim.SetBool("playerInReach", true);
     }
 
     private void Attack()
     {
 
+    }
+
+    private void Evade()
+    {
+
+    }
+
+    private void Group()
+    {
+        boidManager.AddToBoidList(this);
+        isGrouped = true;
+
+
+        enemyBoids = boidManager.EnemyBoids;
+        anim.SetBool("nextToOtherEnemy", true);
     }
 
     private IEnumerator Delay()
