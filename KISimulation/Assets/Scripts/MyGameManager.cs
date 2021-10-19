@@ -66,12 +66,13 @@ public class MyGameManager : MonoBehaviour
         else
         {
             //Set random Spawnpoints and random Rotation
-            RandomSpawnpoint spawnPoint = groundRef.GetComponent<RandomSpawnpoint>();
-            RandomRotation spawnRotation = groundRef.GetComponent<RandomRotation>();
-            spawnPoint.GenerateRandomSpawnPoint();
-            spawnRotation.GenerateRandomSpawnRotation();
+            RandomSpawnpoint spawnPointRef = groundRef.GetComponent<RandomSpawnpoint>();
+            RandomRotation spawnRotationRef = groundRef.GetComponent<RandomRotation>();
+            Vector3 spawnPoint = spawnPointRef.GenerateRandomSpawnPoint();
+            Quaternion spawnRotation = spawnRotationRef.GenerateRandomSpawnRotation();
+            Debug.Log("Spawn Pos in GameManager: " + spawnPoint);
             //Instantiate the Prefab
-            currentInstantiatedObject = Instantiate(enemyPrefab, spawnPoint.SpawnPosition, spawnRotation.SpawnRotation);
+            currentInstantiatedObject = Instantiate(enemyPrefab, spawnPoint, spawnRotation);
             //Safe the instantiated GO in the array
             enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
             //increasing pointer when adding something to the array
