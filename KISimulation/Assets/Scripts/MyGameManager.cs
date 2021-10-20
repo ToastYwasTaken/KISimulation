@@ -44,11 +44,13 @@ public class MyGameManager : MonoBehaviour
 
     private GameObject currentInstantiatedObject;
     private int pointer;
+    private bool firstEnemy;
 
     private void Awake()
     {
         currentInstantiatedObject = null;
         enemiesInstantiatedArr = new GameObject[maxEnemyCount];
+        firstEnemy = true;
     }
     // Update is called once per frame
     void Update()
@@ -68,7 +70,11 @@ public class MyGameManager : MonoBehaviour
             //Set random Spawnpoints and random Rotation
             RandomSpawnpoint spawnPointRef = groundRef.GetComponent<RandomSpawnpoint>();
             RandomRotation spawnRotationRef = groundRef.GetComponent<RandomRotation>();
-            Vector3 spawnPoint = spawnPointRef.GenerateRandomSpawnPoint();
+            if(pointer > 0)
+            {
+                firstEnemy = false;
+            }
+            Vector3 spawnPoint = spawnPointRef.GenerateRandomSpawnPoint(firstEnemy);
             Quaternion spawnRotation = spawnRotationRef.GenerateRandomSpawnRotation();
             Debug.Log("Spawn Pos in GameManager: " + spawnPoint);
             //Instantiate the Prefab

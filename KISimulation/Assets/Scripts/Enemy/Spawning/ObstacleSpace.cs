@@ -23,7 +23,7 @@ public class ObstacleSpace : MonoBehaviour
 {
     private static Transform[] children;
     private static int obstacleCount;
-    private static float[,] obstacleCoordinates;
+    private static int[,] obstacleCoordinates;
     private static int count = 0;
 
     void Awake()
@@ -31,7 +31,7 @@ public class ObstacleSpace : MonoBehaviour
         //Get all obstacles in scene
         children = GetComponentsInChildren<Transform>();
         obstacleCount = children.Length;
-        obstacleCoordinates = new float[obstacleCount, 4];
+        obstacleCoordinates = new int[obstacleCount, 4];
         
     }
 
@@ -40,7 +40,7 @@ public class ObstacleSpace : MonoBehaviour
     /// Calculates the area where enemies shouldn't be instantiated
     /// </summary>
     /// <returns>Array[obstaclesCount, 4] holding the values xFrom, xTo, zFrom, zTo</returns>
-    public static float[,] CalculateSpaceTaken()
+    public static int[,] CalculateSpaceTaken()
     {
         bool excludeFirst = true;
         foreach (Transform child  in children)
@@ -63,10 +63,13 @@ public class ObstacleSpace : MonoBehaviour
                 Renderer renderer = child.GetComponent<Renderer>();
 
                 //Calculate the corners x and z coordinates of that object
-                float xFrom = renderer.bounds.min.x;
-                float xTo = renderer.bounds.max.x;
-                float zFrom = renderer.bounds.min.z;
-                float zTo = renderer.bounds.max.z;
+                //round the values accordingly
+                int xFrom = FloorToInt(renderer.bounds.min.x);
+                int xTo = FloorToInt(renderer.bounds.max.x);
+                int zFrom = FloorToInt(renderer.bounds.min.z);
+                int zTo = FloorToInt(renderer.bounds.max.z);
+
+                ;
 
                 Debug.Log($"xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
 
@@ -80,6 +83,13 @@ public class ObstacleSpace : MonoBehaviour
             }
         }
         return obstacleCoordinates;
+    }
+
+    private static int FloorToInt(float _valueToFloor)
+    {
+        _valueToFloor = _valueToFloor < 0 ? _valueToFloor-0.5f:_valueToFloor+0.5f;
+        int res = (int)_valueToFloor;
+        return res;
     }
 
 }

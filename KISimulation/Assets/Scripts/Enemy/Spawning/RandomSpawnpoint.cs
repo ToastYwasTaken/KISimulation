@@ -28,7 +28,6 @@ public class RandomSpawnpoint : MonoBehaviour
     private Vector3 cornerTopLeft;
     private Vector3 cornerTopRight;
     private Vector3 cornerBotLeft;
-    private Vector3 platformCentre;
     #endregion
 
     [SerializeField]
@@ -40,12 +39,11 @@ public class RandomSpawnpoint : MonoBehaviour
     private int currentScaleX;
     private int currentScaleZ;
 
-    private float[,] invalidSpawnSpaces;
+    private int[,] invalidSpawnSpaces;
     public Vector3 SpawnPosition { get => spawnPosition; }
 
     private void Awake()
     {
-        platformCentre = groundReference.transform.position;
 
         //current Scale of ground
         currentScaleX = (int)groundReference.transform.localScale.x;
@@ -57,30 +55,37 @@ public class RandomSpawnpoint : MonoBehaviour
         cornerBotLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[110];
 
         Debug.Log("Top left corner: " + cornerTopLeft + " Top right corner: " + cornerTopRight + " Bottom left corner: " + cornerBotLeft);
-        
-        //Calculate invalid Spawnpoints
-        invalidSpawnSpaces = ObstacleSpace.CalculateSpaceTaken();
-        }
-    public Vector3 GenerateRandomSpawnPoint()
+
+    }
+    public Vector3 GenerateRandomSpawnPoint(bool _first)
     {
         //Generate spawn points
         //x and z are randomly calculated
         //y is always the same position 
+        //Calculate invalid Spawnpoints
+        if (_first)
+        {
+            invalidSpawnSpaces = ObstacleSpace.CalculateSpaceTaken();
+            _first = false;
+        }
 
         int randomPositionX = (int)Random.Range((cornerTopLeft.x*currentScaleX), (cornerTopRight.x*currentScaleX));
         int positionY = (int)groundReference.transform.position.y + 1;
         int randomPositionZ = (int)Random.Range((cornerTopLeft.z*currentScaleZ), (cornerBotLeft.z*currentScaleZ));
         
         Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
+        Debug.Log("New desired spawn position: " + desiredSpawnPosition);
 
         for (int i = 0; i < invalidSpawnSpaces.GetLength(0); i++)
         {
-            CheckSpawnPoint(desiredSpawnPosition, invalidSpawnSpaces[i, 0], invalidSpawnSpaces[i, 1], invalidSpawnSpaces[i, 2], invalidSpawnSpaces[i, 3]);
+            Debug.Log("Checking spawn point iteration " + i);
+            CheckSpawnPoint(desiredSpawnPosition, invalidSpawnSpaces[i, 0], invalidSpawnSpaces[i, 1], invalidSpawnSpaces[i, 2], invalidSpawnSpaces[i, 3], _first);
         }
-        spawnPosition = desiredSpawnPosition;
-        Debug.Log("Spawn Pos in RandomSpawnPoint: " + spawnPosition);
-        spawnPointsList.Add(spawnPosition);
-        return spawnPosition;
+
+         spawnPosition = desiredSpawnPosition;
+         //Debug.Log("Spawn Pos in RandomSpawnPoint: " + spawnPosition);
+         spawnPointsList.Add(spawnPosition);
+         return spawnPosition;
     }
 
     /// <summary>
@@ -92,16 +97,31 @@ public class RandomSpawnpoint : MonoBehaviour
     /// <param name="_xTo"></param>
     /// <param name="_zFrom"></param>
     /// <param name="_zTo"></param>
-    private void CheckSpawnPoint(Vector3 _desiredSpawnPosition, float _xFrom, float _xTo, float _zFrom, float _zTo)
+    private void CheckSpawnPoint(Vector3 _desiredSpawnPosition, float _xFrom, float _xTo, float _zFrom, float _zTo, bool _first)
     {
-        if(_desiredSpawnPosition.x > _xFrom && _desiredSpawnPosition.x < _xTo && _desiredSpawnPosition.z > _zFrom && _desiredSpawnPosition.z < _zTo)
+        //Check for Obstacles
+        if (_desiredSpawnPosition.x > _xFrom && _desiredSpawnPosition.x < _xTo && _desiredSpawnPosition.z > _zFrom && _desiredSpawnPosition.z < _zTo)
         {
             //Spawn position invalid
-            GenerateRandomSpawnPoint();
-        }else
+            Debug.Log("Spawn invalid, obstacle blocking space");
+            GenerateRandomSpawnPoint(_first);
+        }
+        //Check for previous taken spawnpositions
+        else if (spawnPointsList.Contains(_desiredSpawnPosition))
+        {
+            //Spawn position invalid
+            Debug.Log("Spawn invalid, enemy blocking space");
+            GenerateRandomSpawnPoint(_first);
+        }
+        //Check for overlapping colliders
+        //else if (Physics.CheckSphere(groundReference.transform.position, Mathf.Max((_xTo-_xFrom), (_zFrom - _zTo))))
+        //{
+
+        //}
+        else
         {
             //Spawn position valid
-            return;
+            Debug.Log("Spawn valid");
         }
     }
 
