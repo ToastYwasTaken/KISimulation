@@ -17,12 +17,14 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  19.10.2021  created
+ *  20.10.2021  adjusted obstacleCoordinates to int arr
+ *              added comments
  *  
  *****************************************************************************/
 public class ObstacleSpace : MonoBehaviour
 {
     private static Transform[] children;
-    private static int obstacleCount;
+    public static int obstacleCount;
     private static int[,] obstacleCoordinates;
     private static int count = 0;
 
@@ -52,24 +54,19 @@ public class ObstacleSpace : MonoBehaviour
             }
             else
             {
-                ////Assign scale
-                //currentScaleX = child.localScale.x;
-                //currentScaleZ = child.localScale.z;
-
-                //Get corners of plane
-                //cornerTopLeft = child.GetComponent<MeshFilter>().sharedMesh.vertices[0];
-                //cornerTopRight = child.GetComponent<MeshFilter>().sharedMesh.vertices[10];
-                //cornerBotLeft = child.GetComponent<MeshFilter>().sharedMesh.vertices[110];
+                //Using renderer to get the corner x and z coordinates
                 Renderer renderer = child.GetComponent<Renderer>();
 
                 //Calculate the corners x and z coordinates of that object
                 //round the values accordingly
-                int xFrom = FloorToInt(renderer.bounds.min.x);
-                int xTo = FloorToInt(renderer.bounds.max.x);
-                int zFrom = FloorToInt(renderer.bounds.min.z);
-                int zTo = FloorToInt(renderer.bounds.max.z);
-
-                ;
+                //int xFrom = FloorToInt(renderer.bounds.min.x);
+                //int xTo = FloorToInt(renderer.bounds.max.x);
+                //int zFrom = FloorToInt(renderer.bounds.min.z);
+                //int zTo = FloorToInt(renderer.bounds.max.z);
+                int xFrom = (int)renderer.bounds.min.x;
+                int xTo = (int)renderer.bounds.max.x;
+                int zFrom = (int)renderer.bounds.min.z;
+                int zTo = (int)renderer.bounds.max.z;
 
                 Debug.Log($"xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
 
@@ -85,6 +82,11 @@ public class ObstacleSpace : MonoBehaviour
         return obstacleCoordinates;
     }
 
+    /// <summary>
+    /// Rounds floats to Integers
+    /// </summary>
+    /// <param name="_valueToFloor">the value to convert</param>
+    /// <returns>int value of a float</returns>
     private static int FloorToInt(float _valueToFloor)
     {
         _valueToFloor = _valueToFloor < 0 ? _valueToFloor-0.5f:_valueToFloor+0.5f;

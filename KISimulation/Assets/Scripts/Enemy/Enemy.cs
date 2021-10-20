@@ -17,6 +17,8 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
+ *  17.10.2021  added boid behaviour
+ *  20.10.2021  added comments
  *  
  *****************************************************************************/
 public class Enemy : MonoBehaviour
@@ -58,9 +60,10 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
-
         //assign boids
         boidManager = GameObject.FindGameObjectWithTag("BoidManager").GetComponent<BoidManager>();
+
+        //calculate radii and forces
         float radius = transform.localScale.x / 2f;
         cohesionRadius = radius * radius * 2f;
         alignmentRadius = radius * radius * 2f;
@@ -70,12 +73,13 @@ public class Enemy : MonoBehaviour
         separationForce = boidManager.SeparationForce;
         targetForce = boidManager.TargetForce;
 
-        Idle();
 
-       
     }
 
-
+    #region Boids
+    /// <summary>
+    /// Applies the boid forces on their movement
+    /// </summary>
     public void ApplyBoidsMovement()
     {
         Vector3 target = CalculateTarget(boidManager.PlayerPos);
@@ -87,6 +91,11 @@ public class Enemy : MonoBehaviour
         rb.AddForce(totalForce);
     }
 
+    /// <summary>
+    /// Calculates the target position relative to player position
+    /// </summary>
+    /// <param name="_playerPos">player position</param>
+    /// <returns>target position</returns>
     private Vector3 CalculateTarget(Vector3 _playerPos)
     {
         Vector3 target = (_playerPos - transform.position).normalized * speedMultiplier;
@@ -98,6 +107,10 @@ public class Enemy : MonoBehaviour
         return target;
     }
 
+    /// <summary>
+    /// Calculates separation between the boidds
+    /// </summary>
+    /// <returns>separation vector</returns>
     private Vector3 CalculateSeparation()
     {
         Vector3 separation = Vector3.zero;
@@ -132,6 +145,10 @@ public class Enemy : MonoBehaviour
         return separation;
     }
 
+    /// <summary>
+    /// calculates the alignment of the boids 
+    /// </summary>
+    /// <returns>alignment vector</returns>
     private Vector3 CalculateAlignment()
     {
         Vector3 alignment = Vector3.zero;
@@ -160,6 +177,11 @@ public class Enemy : MonoBehaviour
         return alignment;
     }
 
+
+    /// <summary>
+    /// calculates cohesion of the boids
+    /// </summary>
+    /// <returns>cohesion vector</returns>
     private Vector3 CalculateCohesion()
     {
         Vector3 cohesion = Vector3.zero;
@@ -182,12 +204,9 @@ public class Enemy : MonoBehaviour
         }
         return cohesion;
     }
+    #endregion
 
-    private void Idle()
-    {
-        
-    }
-
+    #region StateSwitches
     private void Patrol()
     {
         //Set delay before patroling
@@ -215,6 +234,7 @@ public class Enemy : MonoBehaviour
         enemyBoids = boidManager.EnemyBoids;
         anim.SetBool("nextToOtherEnemy", true);
     }
+    #endregion
 
     private IEnumerator Delay()
     {

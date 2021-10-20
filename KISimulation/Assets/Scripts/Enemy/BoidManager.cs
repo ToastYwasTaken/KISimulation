@@ -2,8 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/******************************************************************************
+ * Project: KISimulation
+ * File: Enemy.cs
+ * Version: 1.01
+ * Autor:  Franz Mörike (FM);
+ * 
+ * 
+ * These coded instructions, statements, and computer programs contain
+ * proprietary information of the author and are protected by Federal
+ * copyright law. They may not be disclosed to third parties or copied
+ * or duplicated in any form, in whole or in part, without the prior
+ * written consent of the author.
+ * 
+ * ChangeLog
+ * ----------------------------
+ *  17.10.2021  created
+ *  20.10.2021  minor changes
+ *  
+ *****************************************************************************/
 
-//TODO: Empty list after calculation behaviour of these boids
+//TODO: Empty list after calculating behaviour of these boids
 public class BoidManager : MonoBehaviour
 {
 
@@ -27,15 +46,14 @@ public class BoidManager : MonoBehaviour
 
     private Vector3 playerPos;
 
+    #region Properties
     public List<Enemy> EnemyBoids { get => enemyBoids; }
-
     public float CohesionForce { get => cohesionForce; }
     public float AlignmentForce { get => alignmentForce; }
     public float SeparationForce { get => separationForce; }
-
     public float TargetForce { get => targetForce; }
     public Vector3 PlayerPos { get => playerPos; }
-   
+    #endregion
 
     void Awake()
     {
@@ -45,14 +63,6 @@ public class BoidManager : MonoBehaviour
         }
         else Destroy(gameObject);
     }
-
-    public void AddToBoidList(Enemy _objToAdd)
-    {
-        listEmpty = false;
-        enemyBoids.Add(_objToAdd);
-    }
-
-
     public void Update()
     {
         //Get player pos 
@@ -68,4 +78,12 @@ public class BoidManager : MonoBehaviour
             }
         }
     }
+    public void AddToBoidList(Enemy _objToAdd)
+    {
+        listEmpty = false;
+        enemyBoids.Add(_objToAdd);
+    }
+
+
+
 }

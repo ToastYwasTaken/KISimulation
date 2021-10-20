@@ -74,7 +74,8 @@ public class MyGameManager : MonoBehaviour
             {
                 firstEnemy = false;
             }
-            Vector3 spawnPoint = spawnPointRef.GenerateRandomSpawnPoint(firstEnemy);
+            spawnPointRef.GenerateRandomSpawnPoint(firstEnemy);
+            Vector3 spawnPoint = spawnPointRef.SpawnPosition;
             Quaternion spawnRotation = spawnRotationRef.GenerateRandomSpawnRotation();
             Debug.Log("Spawn Pos in GameManager: " + spawnPoint);
             //Instantiate the Prefab

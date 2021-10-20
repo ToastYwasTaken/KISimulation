@@ -56,6 +56,7 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Enemy\Spawning\ObstacleSpace.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_ATTACK.cs" />
     <Compile Include="Assets\Scripts\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_IDLE.cs" />
@@ -69,7 +70,6 @@
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\MyGameManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_GROUP.cs" />
-    <Compile Include="Assets\Scripts\Enemy\Spawning\ObstacleSpace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
