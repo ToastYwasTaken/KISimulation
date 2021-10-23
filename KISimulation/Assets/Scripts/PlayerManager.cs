@@ -18,6 +18,7 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  05.10.2021  created
+ *  23.10.2021  added method description
  *  
  *****************************************************************************/
 public class PlayerManager : MonoBehaviour
@@ -46,6 +47,9 @@ public class PlayerManager : MonoBehaviour
         RotatePlayer();
     }
 
+    /// <summary>
+    /// Player movement
+    /// </summary>
     private void MovePlayer()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
@@ -55,6 +59,9 @@ public class PlayerManager : MonoBehaviour
         playerController.Move(direction * Time.deltaTime * playerSpeed);
     }
 
+    /// <summary>
+    /// Player rotation
+    /// </summary>
     private void RotatePlayer()
     {
         //Update playerPos
@@ -73,7 +80,6 @@ public class PlayerManager : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(distancePlayerToMouse);
             transform.rotation = rotation;
         }
-        
     }
 
     private void OnDrawGizmos()

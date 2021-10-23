@@ -18,15 +18,63 @@ using UnityEngine.AI;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
+ *  23.10.2021  added IDLE behaviour
  *  
  *****************************************************************************/
 public class FSM_IDLE : FSM
 {
+    private float desiredRotationY;
+    private float currentRotationY;
+    private int rotationMultiplier;
+    private float rotationSpeed = 5f;
+    private bool rotatingForward;
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        newRotationAndMultiplier();
+    }
+
+    //IDLE behaviour is coded here
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //IDLE BEHAVIOUR
+        currentRotationY = base.gameObject.transform.rotation.eulerAngles.y;
+        //CASE: rotating forward AND currentRotationY > desiredRotationY
+        if (rotatingForward && currentRotationY > desiredRotationY)
+        {
+            rotatingForward = false;
+            newRotationAndMultiplier();
+        }
+        //CASE: rotating forward AND currentRotationY < desiredRotationY
+        else if (rotatingForward && currentRotationY < desiredRotationY)
+        {
+            base.gameObject.transform.Rotate(new Vector3(0f, rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
+        }
+        //CASE: rotating backward AND currentRotationY > desiredRotationY
+        else if (!rotatingForward && currentRotationY > desiredRotationY)
+        {
+            base.gameObject.transform.Rotate(new Vector3(0f, -rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
+        }
+        //CASE: rotating backward AND currentRotationY < desiredRotationY
+        else if (!rotatingForward && currentRotationY < desiredRotationY)
+        {
+            rotatingForward = true;
+            newRotationAndMultiplier();
+        }
+    }
 
+
+    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+
+    }
+
+
+    /// <summary>
+    /// Calculates new desired Rotation y and rotationMultiplier when destination is reached by the enemy
+    /// </summary>
+    private void newRotationAndMultiplier()
+    {
+        desiredRotationY = Random.Range(0, 360);
+        rotationMultiplier = Random.Range(5, 15);
     }
 }

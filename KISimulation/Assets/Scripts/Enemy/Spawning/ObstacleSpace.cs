@@ -18,7 +18,7 @@ using UnityEngine;
  * ----------------------------
  *  19.10.2021  created
  *  20.10.2021  adjusted obstacleCoordinates to int arr
- *              added comments
+ *              added method description
  *  
  *****************************************************************************/
 public class ObstacleSpace : MonoBehaviour

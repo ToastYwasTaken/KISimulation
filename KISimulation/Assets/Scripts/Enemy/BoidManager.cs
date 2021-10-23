@@ -19,13 +19,14 @@ using UnityEngine;
  * ----------------------------
  *  17.10.2021  created
  *  20.10.2021  minor changes
+ *  23.10.2021  added method description
  *  
  *****************************************************************************/
 
 //TODO: Empty list after calculating behaviour of these boids
 public class BoidManager : MonoBehaviour
 {
-
+    //BoidManager script is a Singleton
     private BoidManager instance;
 
     private List<Enemy> enemyBoids;
@@ -78,6 +79,11 @@ public class BoidManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Adds an enemy to the boid list
+    /// </summary>
+    /// <param name="_objToAdd">enemy object to add</param>
     public void AddToBoidList(Enemy _objToAdd)
     {
         listEmpty = false;

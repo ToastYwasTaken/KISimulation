@@ -17,21 +17,26 @@ using UnityEngine;
  * ChangeLog
  * 
  *  07.10.2021  created
+ *  23.10.2021  renamed spawnRotation to rotation
+ *              renamed GenerateRandomSpawnRotation() to GenerateRandomRotation()
+ *              added method description
  *  
  *****************************************************************************/
 public class RandomRotation : MonoBehaviour
 {
-    private Quaternion spawnRotation;
+    private Quaternion rotation;
 
-    public Quaternion SpawnRotation { get => spawnRotation;}
-
-    public Quaternion GenerateRandomSpawnRotation()
+    /// <summary>
+    /// Generates a random rotation around y axis
+    /// </summary>
+    /// <returns>a Quaternion</returns>
+    public Quaternion GenerateRandomRotation()
     {
         float rotationX = 0f, rotationZ = 0f;
         float rotationY = Random.Range(-1f, 1f), rotationMagnitudeW = Random.Range(-1f, 1f);
 
-        spawnRotation = new Quaternion(rotationX, rotationY, rotationZ, rotationMagnitudeW);
-        return spawnRotation;
+        rotation = new Quaternion(rotationX, rotationY, rotationZ, rotationMagnitudeW);
+        return rotation;
     }
 
 }

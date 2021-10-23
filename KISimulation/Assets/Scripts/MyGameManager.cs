@@ -22,6 +22,7 @@ using TMPro;
  *  05.10.2021  created
  *  10.10.2021  changed enemiesInstantiatedList to .Arr 
  *              added Remove() method
+ *  23.10.2021  added method description
  *  
  *****************************************************************************/
 public class MyGameManager : MonoBehaviour
@@ -52,12 +53,10 @@ public class MyGameManager : MonoBehaviour
         enemiesInstantiatedArr = new GameObject[maxEnemyCount];
         firstEnemy = true;
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
+    /// <summary>
+    /// Spawns an enemy when pressing the "add enemy" button in scene
+    /// </summary>
     public void SpawnEnemy()
     {
         //Don't spawn more than maxEnemyCount enemies
@@ -68,18 +67,18 @@ public class MyGameManager : MonoBehaviour
         else
         {
             //Set random Spawnpoints and random Rotation
-            RandomSpawnpoint spawnPointRef = groundRef.GetComponent<RandomSpawnpoint>();
-            RandomRotation spawnRotationRef = groundRef.GetComponent<RandomRotation>();
+            RandomSpawnpoint randomSpawnPoint = groundRef.GetComponent<RandomSpawnpoint>();
+            RandomRotation randomSpawnRotation = groundRef.GetComponent<RandomRotation>();
             if(pointer > 0)
             {
                 firstEnemy = false;
             }
-            spawnPointRef.GenerateRandomSpawnPoint(firstEnemy);
-            Vector3 spawnPoint = spawnPointRef.SpawnPosition;
-            Quaternion spawnRotation = spawnRotationRef.GenerateRandomSpawnRotation();
-            Debug.Log("Spawn Pos in GameManager: " + spawnPoint);
+            randomSpawnPoint.GenerateRandomSpawnPoint(firstEnemy);
+            Vector3 newSpawnPoint = randomSpawnPoint.SpawnPosition;
+            Quaternion newSpawnRotation = randomSpawnRotation.GenerateRandomRotation();
+            Debug.Log("Spawn Pos in GameManager: " + newSpawnPoint);
             //Instantiate the Prefab
-            currentInstantiatedObject = Instantiate(enemyPrefab, spawnPoint, spawnRotation);
+            currentInstantiatedObject = Instantiate(enemyPrefab, newSpawnPoint, newSpawnRotation);
             //Safe the instantiated GO in the array
             enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
             //increasing pointer when adding something to the array
@@ -88,6 +87,9 @@ public class MyGameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Removes the last instantiated enemy when pressing the "remove enemy" button in scene
+    /// </summary>
     public void RemoveEnemy()
     {
         //Don't remove out of empty list

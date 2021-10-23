@@ -18,7 +18,7 @@ using UnityEngine;
  * ----------------------------
  *  07.10.2021  created
  *  17.10.2021  added boid behaviour
- *  20.10.2021  added comments
+ *  20.10.2021  added method description
  *  
  *****************************************************************************/
 public class Enemy : MonoBehaviour
@@ -37,7 +37,6 @@ public class Enemy : MonoBehaviour
     float speedMultiplier, maxVelocity;
 
     #region BOIDS
-    [SerializeField]
     BoidManager boidManager;
 
     List<Enemy> enemyBoids;
@@ -73,7 +72,7 @@ public class Enemy : MonoBehaviour
         separationForce = boidManager.SeparationForce;
         targetForce = boidManager.TargetForce;
 
-
+        
     }
 
     #region Boids

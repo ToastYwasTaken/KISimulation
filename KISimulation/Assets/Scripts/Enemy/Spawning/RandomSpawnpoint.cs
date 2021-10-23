@@ -18,7 +18,7 @@ using UnityEngine;
  *  07.10.2021  created
  *  17.10.2021  adjusted
  *  20.10.2021  bugfixing
- *              added comments
+ *              added method description
  *  
  *****************************************************************************/
 
