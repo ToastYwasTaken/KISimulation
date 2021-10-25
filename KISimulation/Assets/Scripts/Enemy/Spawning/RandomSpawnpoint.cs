@@ -31,15 +31,10 @@ public class RandomSpawnpoint : MonoBehaviour
     private Vector3 cornerBotLeft;
     #endregion
 
-    [SerializeField]
-    private GameObject groundReference;
+    private Ground groundRef;
 
     //previously spawned enemies list
     private List<Vector3> spawnPointsList = new List<Vector3>();
-
-    //currentScale is used for non square ground
-    private int currentScaleX;
-    private int currentScaleZ;
 
     //Obstacle position coordinates x and z
     private int[,] invalidSpawnSpaces;
@@ -47,27 +42,16 @@ public class RandomSpawnpoint : MonoBehaviour
     private List<bool> validSpawnPositions;
 
     public Vector3 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
-    private void Awake()
+    //Note: MUST assign in Start, bc in Awake() ground might not be instantiated before this
+    private void Start()
     {
-        //current Scale of ground
-        currentScaleX = (int)groundReference.transform.localScale.x;
-        currentScaleZ = (int)groundReference.transform.localScale.z;
+        groundRef = this.gameObject.GetComponent<Ground>();
 
         //Get corners of plane
-        cornerTopLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[0];
-        cornerTopRight = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[10];
-        cornerBotLeft = groundReference.GetComponent<MeshFilter>().sharedMesh.vertices[110];
-
-        //adjust with current scale
-        cornerTopLeft.x *= currentScaleX;
-        cornerTopLeft.z *= currentScaleZ;
-        cornerTopRight.x *= currentScaleX;
-        cornerTopRight.z *= currentScaleZ;
-        cornerBotLeft.x *= currentScaleX;
-        cornerBotLeft.z *= currentScaleZ;
-        Debug.Log("Top left corner: " + cornerTopLeft + " Top right corner: " + cornerTopRight + " Bottom left corner: " + cornerBotLeft);
-
-        
+        cornerTopLeft = groundRef.GetCornerTopLeft;
+        cornerTopRight = groundRef.GetCornerTopRight;
+        cornerBotLeft = groundRef.GetCornerBotLeft;
+        //Debug.Log("cornerTopLeft: " + cornerTopLeft + " | cornerTopRight: " + cornerTopRight + " | cornerBotLeft: " + cornerBotLeft);
     }
 
     /// <summary>
@@ -125,7 +109,7 @@ public class RandomSpawnpoint : MonoBehaviour
         //x and z are randomly calculated
         //y is always the same position 
         int randomPositionX = (int)Random.Range(cornerTopLeft.x, cornerTopRight.x);
-        int positionY = (int)groundReference.transform.position.y + 1;
+        int positionY = (int)groundRef.transform.position.y + 1;
         int randomPositionZ = (int)Random.Range(cornerTopLeft.z, cornerBotLeft.z);
 
         Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);

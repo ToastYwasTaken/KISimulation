@@ -23,15 +23,13 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_IDLE : FSM
 {
-    //Needed to use IEnumerator within a non Mono class
     private MonoBehaviour monoSurrogate;
-
     private float desiredRotationY;
     private float currentRotationY;
     private int rotationMultiplier;
     private float rotationSpeed = 5f;
     private bool rotatingForward;
-    private float randomDelay;
+    //private float randomDelay = 2f;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -49,9 +47,6 @@ public class FSM_IDLE : FSM
         {
             //destination angle reached
             rotatingForward = false;
-            //Start delay coroutine
-            monoSurrogate.StartCoroutine(IRotationDelay());
-            SetRotationAndMultiplier();
         }
         //CASE: rotating forward AND currentRotationY < desiredRotationY
         else if (rotatingForward && currentRotationY < desiredRotationY)
@@ -68,9 +63,6 @@ public class FSM_IDLE : FSM
         {
             //destination angle reached
             rotatingForward = true;
-            //Start delay coroutine
-            monoSurrogate.StartCoroutine(IRotationDelay());
-            SetRotationAndMultiplier();
         }
     }
 
@@ -78,18 +70,6 @@ public class FSM_IDLE : FSM
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
 
-    }
-
-    /// <summary>
-    /// Generates a random delay between rotating the enemy
-    /// </summary>
-    /// <returns>float delay</returns>
-    private IEnumerator IRotationDelay()
-    {
-        Debug.Log("Starting delay");
-        randomDelay = Random.Range(1f, 8f);
-        yield return new WaitForSeconds(randomDelay);
-        Debug.Log("Delay ended");
     }
 
     /// <summary>
