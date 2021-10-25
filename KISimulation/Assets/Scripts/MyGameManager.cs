@@ -42,16 +42,15 @@ public class MyGameManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI textEnemies;
 
-
     private GameObject currentInstantiatedObject;
     private int pointer;
-    private bool firstEnemy;
+    //private bool firstEnemy;
 
     private void Awake()
     {
         currentInstantiatedObject = null;
         enemiesInstantiatedArr = new GameObject[maxEnemyCount];
-        firstEnemy = true;
+        //firstEnemy = true;
     }
 
     /// <summary>
@@ -69,12 +68,11 @@ public class MyGameManager : MonoBehaviour
             //Set random Spawnpoints and random Rotation
             RandomSpawnpoint randomSpawnPoint = groundRef.GetComponent<RandomSpawnpoint>();
             RandomRotation randomSpawnRotation = groundRef.GetComponent<RandomRotation>();
-            if(pointer > 0)
-            {
-                firstEnemy = false;
-            }
-            randomSpawnPoint.GenerateRandomSpawnPoint(firstEnemy);
-            Vector3 newSpawnPoint = randomSpawnPoint.SpawnPosition;
+            //if(pointer > 0)
+            //{
+            //    firstEnemy = false;
+            //}
+            Vector3 newSpawnPoint = randomSpawnPoint.ReturnValidSpawnPoint();
             Quaternion newSpawnRotation = randomSpawnRotation.GenerateRandomRotation();
             Debug.Log("Spawn Pos in GameManager: " + newSpawnPoint);
             //Instantiate the Prefab

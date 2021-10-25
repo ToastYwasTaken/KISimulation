@@ -23,6 +23,7 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_IDLE : FSM
 {
+    //TODO Add intermediate state with exitTime as extra node
     private MonoBehaviour monoSurrogate;
     private float desiredRotationY;
     private float currentRotationY;
@@ -47,6 +48,7 @@ public class FSM_IDLE : FSM
         {
             //destination angle reached
             rotatingForward = false;
+            SetRotationAndMultiplier();
         }
         //CASE: rotating forward AND currentRotationY < desiredRotationY
         else if (rotatingForward && currentRotationY < desiredRotationY)
@@ -63,6 +65,7 @@ public class FSM_IDLE : FSM
         {
             //destination angle reached
             rotatingForward = true;
+            SetRotationAndMultiplier();
         }
     }
 

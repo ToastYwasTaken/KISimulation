@@ -19,13 +19,13 @@ using UnityEngine;
  *  17.10.2021  adjusted
  *  20.10.2021  bugfixing
  *              added method description
+ *  25.10.2021  fixed proper assigning of valid spawn positions
  *  
  *****************************************************************************/
 
 public class RandomSpawnpoint : MonoBehaviour
 {
     #region Vectors
-    private Vector3 spawnPosition;
     private Vector3 cornerTopLeft;
     private Vector3 cornerTopRight;
     private Vector3 cornerBotLeft;
@@ -33,79 +33,35 @@ public class RandomSpawnpoint : MonoBehaviour
 
     private Ground groundRef;
 
+    [SerializeField]
+    private PlayerManager playerManager;
+
     //previously spawned enemies list
     private List<Vector3> spawnPointsList = new List<Vector3>();
 
     //Obstacle position coordinates x and z
     private int[,] invalidSpawnSpaces;
 
-    private List<bool> validSpawnPositions;
-
-    public Vector3 SpawnPosition { get => spawnPosition; set => spawnPosition = value; }
     //Note: MUST assign in Start, bc in Awake() ground might not be instantiated before this
     private void Start()
     {
         groundRef = this.gameObject.GetComponent<Ground>();
-
+        //Add player position to spawnPointsList
+        spawnPointsList.Add(playerManager.gameObject.transform.position);
         //Get corners of plane
         cornerTopLeft = groundRef.GetCornerTopLeft;
         cornerTopRight = groundRef.GetCornerTopRight;
         cornerBotLeft = groundRef.GetCornerBotLeft;
+
         //Debug.Log("cornerTopLeft: " + cornerTopLeft + " | cornerTopRight: " + cornerTopRight + " | cornerBotLeft: " + cornerBotLeft);
     }
 
     /// <summary>
-    /// Generates a random Spawnpoint on the ground plane for enemies 
-    /// and shouldn't spawn them inside of obstacles
+    /// Generates a random desired spawn position on top of the ground
     /// </summary>
-    /// <param name="_first">only Calculate the area of the obstacles on first runthrough</param>
-    //public void GenerateRandomSpawnPoint(bool _first)
-    //{
-    //    //Calculate invalid Spawnpoints on first runthrough
-    //    if (_first)
-    //    {
-    //        invalidSpawnSpaces = ObstacleSpace.CalculateSpaceTaken();
-    //        _first = false;
-    //    }
-
-    //    //x and z are randomly calculated
-    //    //y is always the same position 
-    //    int randomPositionX = (int)Random.Range(cornerTopLeft.x, cornerTopRight.x);
-    //    int positionY = (int)groundReference.transform.position.y + 1;
-    //    int randomPositionZ = (int)Random.Range(cornerTopLeft.z, cornerBotLeft.z);
-
-    //    Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
-    //    Debug.Log("New desired spawn position: " + desiredSpawnPosition);
-
-    //    bool spawnPointIsValid = false;
-
-    //    for (int i = 0; i < invalidSpawnSpaces.GetLength(0) - 1; i++)
-    //    {
-    //        Debug.Log("Checking spawn point iteration " + i);
-    //        spawnPointIsValid = SpawnPointIsValid(desiredSpawnPosition, invalidSpawnSpaces[i, 0], invalidSpawnSpaces[i, 1], invalidSpawnSpaces[i, 2], invalidSpawnSpaces[i, 3], _first);
-
-    //        if (!spawnPointIsValid)
-    //        {
-    //            GenerateRandomSpawnPoint(_first);
-    //        }
-    //    }
-    //    if (spawnPointIsValid)
-    //    {
-    //        spawnPointsList.Add(desiredSpawnPosition);
-    //        Debug.Log("Setting spawnPosition: " + desiredSpawnPosition);
-    //        SpawnPosition = desiredSpawnPosition;
-    //    }
-    //}
-    public void GenerateRandomSpawnPoint(bool _first)
+    /// <returns>Vector3 a potential spawn position</returns>
+    private Vector3 GenerateRandomSpawnPosition()
     {
-        validSpawnPositions = new List<bool>(ObstacleSpace.obstacleCount);
-        //Calculate invalid Spawnpoints on first runthrough
-        if (_first)
-        {
-            invalidSpawnSpaces = ObstacleSpace.CalculateSpaceTaken();
-            _first = false;
-        }
-
         //x and z are randomly calculated
         //y is always the same position 
         int randomPositionX = (int)Random.Range(cornerTopLeft.x, cornerTopRight.x);
@@ -113,65 +69,49 @@ public class RandomSpawnpoint : MonoBehaviour
         int randomPositionZ = (int)Random.Range(cornerTopLeft.z, cornerBotLeft.z);
 
         Vector3 desiredSpawnPosition = new Vector3(randomPositionX, positionY, randomPositionZ);
-        Debug.Log("New desired spawn position: " + desiredSpawnPosition);
-
-        bool spawnPointIsValid = false;
-
-        for (int i = 0; i < invalidSpawnSpaces.GetLength(0) - 1; i++)
-        {
-            Debug.Log("Checking spawn point iteration " + i);
-            spawnPointIsValid = SpawnPointIsValid(desiredSpawnPosition, invalidSpawnSpaces[i, 0], invalidSpawnSpaces[i, 1], invalidSpawnSpaces[i, 2], invalidSpawnSpaces[i, 3], _first);
-            if (!spawnPointIsValid)
-            {
-                validSpawnPositions = null;
-                GenerateRandomSpawnPoint(_first);
-            }
-            else validSpawnPositions.Add(spawnPointIsValid);
-        }
-        if (!validSpawnPositions.Contains(false))
-        {
-            spawnPointsList.Add(desiredSpawnPosition);
-            Debug.Log("Setting spawnPosition: " + desiredSpawnPosition);
-            SpawnPosition = desiredSpawnPosition;
-        }
+        //Debug.Log("New desired spawn position: " + desiredSpawnPosition);
+        return desiredSpawnPosition;
     }
-    /// <summary>
-    /// Checks if desired spawn position is valid
-    /// Compares if within other objects bounds
-    /// </summary>
-    /// <param name="_desiredSpawnPosition">desired spawn position</param>
-    /// <param name="_xFrom">the x coordinate of area from where to start</param>
-    /// <param name="_xTo">the x coordinate of area of where to go</param>
-    /// <param name="_zFrom">the z coordinate of area from where to start</param>
-    /// <param name="_zTo">the z coordinate of area of where to go</param>
-    /// <returns>true if valid, false if invalid</returns>
-    private bool SpawnPointIsValid(Vector3 _desiredSpawnPosition, float _xFrom, float _xTo, float _zFrom, float _zTo, bool _first)
-    {
-        //Check for Obstacles
-        if (_desiredSpawnPosition.x > _xFrom && _desiredSpawnPosition.x < _xTo && _desiredSpawnPosition.z > _zFrom && _desiredSpawnPosition.z < _zTo)
-        {
-            //Spawn position invalid
-            Debug.Log("Spawn invalid, obstacle blocking space");
-            return false;
-        }
-        //Check for previous taken spawnpositions
-        else if (spawnPointsList.Contains(_desiredSpawnPosition))
-        {
-            //Spawn position invalid
-            Debug.Log("Spawn invalid, enemy blocking space");
-            return false;
-        }
-        //Check for overlapping colliders
-        //else if (Physics.CheckSphere(groundReference.transform.position, Mathf.Max((_xTo-_xFrom), (_zFrom - _zTo))))
-        //{
 
-        //}
-        else
+    /// <summary>
+    /// Returns a valid spawnposition after checking for overlapping other objects
+    /// </summary>
+    /// <returns>Vector3 desiredSpawnPoint</returns>
+    public Vector3 ReturnValidSpawnPoint()
+    {
+        //Get all invalid spawn areas
+        invalidSpawnSpaces = ObstacleSpace.CalculateSpaceTaken();
+        int antiCrashCounter = 0;
+        Vector3 desiredSpawnPoint = GenerateRandomSpawnPosition();
+        bool isValid;
+        //Check for Obstacles
+        do
         {
-            //Spawn position valid
-            Debug.Log("Spawn valid");
-            return true;
-        }
+            isValid = true;
+            for (int i = 0; i < invalidSpawnSpaces.GetLength(0); i++)
+            {
+                //spawnPosition invalid | desired spawn position blocked by obstacles
+                if ((desiredSpawnPoint.x >= invalidSpawnSpaces[i, 0] && desiredSpawnPoint.x <= invalidSpawnSpaces[i, 1]) && (desiredSpawnPoint.z >= invalidSpawnSpaces[i, 2] && desiredSpawnPoint.z <= invalidSpawnSpaces[i, 3]))
+                {
+                    isValid = false;
+                    desiredSpawnPoint = GenerateRandomSpawnPosition();
+                    break;
+                }
+                //spawnPosition invalid | desired spawn position already in list
+                else if (spawnPointsList.Contains(desiredSpawnPoint))
+                {
+                    isValid = false;
+                    desiredSpawnPoint = GenerateRandomSpawnPosition();
+                    break;
+                }
+            }
+            antiCrashCounter++;
+            isValid = antiCrashCounter >= 1000;
+        } while (!isValid);
+        antiCrashCounter = 0;
+        Debug.Log("desired spawn position in RandomSpawnpoint: " + desiredSpawnPoint);
+        spawnPointsList.Add(desiredSpawnPoint);
+        return desiredSpawnPoint;
     }
 
 }

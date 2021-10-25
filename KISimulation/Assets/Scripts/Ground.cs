@@ -34,11 +34,11 @@ public class Ground : MonoBehaviour
     private Vector3 cornerTopRight;
     private Vector3 cornerBotLeft;
 
-    public int GetCurrentWidthX { get => currentWidthX; }
-    public int GetCurrentScaleX { get => currentScaleX; }
-    public int GetCurrentScaleZ { get => currentScaleZ; }
-    public int GetCurrentHeightZ { get => currentHeightZ; }
-    public int GetAreaOfGround { get => areaOfGround; }
+    //public int GetCurrentWidthX { get => currentWidthX; }
+    //public int GetCurrentScaleX { get => currentScaleX; }
+    //public int GetCurrentScaleZ { get => currentScaleZ; }
+    //public int GetCurrentHeightZ { get => currentHeightZ; }
+    //public int GetAreaOfGround { get => areaOfGround; }
     public Vector3 GetCornerTopLeft { get => cornerTopLeft; }
     public Vector3 GetCornerTopRight { get => cornerTopRight; }
     public Vector3 GetCornerBotLeft { get => cornerBotLeft; }
@@ -50,6 +50,9 @@ public class Ground : MonoBehaviour
         AssignValues();
     }
 
+    /// <summary>
+    /// Assigns all values the ground contains in order to ease calculations in other classes
+    /// </summary>
     public void AssignValues()
     {
         //assign scale

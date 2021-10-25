@@ -23,9 +23,19 @@ using UnityEngine.AI;
 public class FSM_PATROL : FSM
 {
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+
+    }
+
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+
+    }
+
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+
     }
 }

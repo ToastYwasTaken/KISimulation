@@ -19,11 +19,15 @@ using UnityEngine;
  *  19.10.2021  created
  *  20.10.2021  adjusted obstacleCoordinates to int arr
  *              added method description
+ *  25.10.2021  added additional list to save child objects without mother
  *  
  *****************************************************************************/
 public class ObstacleSpace : MonoBehaviour
 {
-    private static Transform[] children;
+    private static Transform[] childrenAndMother;
+    //list holds only child obj
+    private static List<Transform> childrenList;
+    //obstacleCount excluding mother obj
     public static int obstacleCount;
     private static int[,] obstacleCoordinates;
     private static int count = 0;
@@ -31,10 +35,9 @@ public class ObstacleSpace : MonoBehaviour
     void Awake()
     {
         //Get all obstacles in scene
-        children = GetComponentsInChildren<Transform>();
-        obstacleCount = children.Length;
+        AssignChildren();
+        obstacleCount = childrenAndMother.Length-1;
         obstacleCoordinates = new int[obstacleCount, 4];
-        
     }
 
 
@@ -44,31 +47,18 @@ public class ObstacleSpace : MonoBehaviour
     /// <returns>Array[obstaclesCount, 4] holding the values xFrom, xTo, zFrom, zTo</returns>
     public static int[,] CalculateSpaceTaken()
     {
-        bool excludeFirst = true;
-        foreach (Transform child  in children)
+        foreach (Transform child  in childrenList)
         {
-            //exclude mother object
-            if (excludeFirst)
-            {
-                excludeFirst = false;
-            }
-            else
-            {
-                //Using renderer to get the corner x and z coordinates
+
+                //Using renderer to get the corner x and z coordinates of the obstacles
                 Renderer renderer = child.GetComponent<Renderer>();
 
-                //Calculate the corners x and z coordinates of that object
-                //round the values accordingly
-                //int xFrom = FloorToInt(renderer.bounds.min.x);
-                //int xTo = FloorToInt(renderer.bounds.max.x);
-                //int zFrom = FloorToInt(renderer.bounds.min.z);
-                //int zTo = FloorToInt(renderer.bounds.max.z);
                 int xFrom = (int)renderer.bounds.min.x;
                 int xTo = (int)renderer.bounds.max.x;
                 int zFrom = (int)renderer.bounds.min.z;
                 int zTo = (int)renderer.bounds.max.z;
 
-                Debug.Log($"xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
+                Debug.Log($"Obstacle {count}: xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
 
                 //add to array
                 obstacleCoordinates[count, 0] = xFrom;
@@ -77,21 +67,27 @@ public class ObstacleSpace : MonoBehaviour
                 obstacleCoordinates[count, 3] = zTo;
 
                 count++;
-            }
         }
+        //resetting counter
+        count = 0;
         return obstacleCoordinates;
     }
 
     /// <summary>
-    /// Rounds floats to Integers
+    /// Assigning children / exclude motherObj
     /// </summary>
-    /// <param name="_valueToFloor">the value to convert</param>
-    /// <returns>int value of a float</returns>
-    private static int FloorToInt(float _valueToFloor)
+    private void AssignChildren()
     {
-        _valueToFloor = _valueToFloor < 0 ? _valueToFloor-0.5f:_valueToFloor+0.5f;
-        int res = (int)_valueToFloor;
-        return res;
+        childrenAndMother = GetComponentsInChildren<Transform>();
+        childrenList = new List<Transform>();
+        foreach (Transform child in childrenAndMother)
+        {
+            //Filter by tag
+            if (child.tag.Equals("Obstacle"))
+            {
+                childrenList.Add(child);
+            }
+        }
     }
 
 }

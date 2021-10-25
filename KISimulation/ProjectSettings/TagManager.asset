@@ -6,8 +6,9 @@ TagManager:
   tags:
   - Ground
   - Enemy
-  - Wall
   - BoidManager
+  - Obstacle
+  - WayPoint
   layers:
   - Default
   - TransparentFX

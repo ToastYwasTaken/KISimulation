@@ -36,6 +36,12 @@ public class FSM : StateMachineBehaviour
     [SerializeField]
     NavMeshAgent navMeshAgent;
 
+    private Transform[] wayPoints;
+
+    public void AssignWayPoints(WayPoints _wayPointsRef)
+    {
+        _wayPointsRef.ChildrenList;
+    }
 
     public void SetGO(GameObject _gameObject)
     {
