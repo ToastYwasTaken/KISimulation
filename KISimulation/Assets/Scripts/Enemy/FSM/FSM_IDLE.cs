@@ -30,6 +30,7 @@ public class FSM_IDLE : FSM
     private int rotationMultiplier;
     private float rotationSpeed = 5f;
     private bool rotatingForward;
+    private bool firstTimeExitingIdle = true;
     //private float randomDelay = 2f;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -72,7 +73,13 @@ public class FSM_IDLE : FSM
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        //preparing wayPoints and nav mesh agent for FSM_PATROL
+        if (firstTimeExitingIdle)
+        {
+            base.AssignWayPoints();
+            firstTimeExitingIdle = false;
+            base.SetNavMeshAgent(this.gameObject.GetComponent<NavMeshAgent>());
+        }
     }
 
     /// <summary>

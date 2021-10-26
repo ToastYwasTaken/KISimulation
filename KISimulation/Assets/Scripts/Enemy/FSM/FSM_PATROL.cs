@@ -18,15 +18,16 @@ using UnityEngine.AI;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
+ *  26.10.2021  added patrol behaviour
  *  
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
-
+    private float moveSpeed;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        //can use base.wayPoints here and base.navMeshAgent
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -37,5 +38,17 @@ public class FSM_PATROL : FSM
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
 
+    }
+
+    private void SearchNearestPatrolPoint()
+    {
+        for (int i = 0; i < base.wayPoints.Length; i++)
+        {
+            //Search algorithm: adding x and z coordinates then subtracting from enemy posiiton
+            int wayPointX = (int)base.wayPoints[i].x;
+            int wayPointZ = (int)base.wayPoints[i].z;
+            int playerPositionX = (int)base.gameObject.transform.position.x;
+            int playerPositionZ = (int)base.gameObject.transform.position.z;
+        }
     }
 }

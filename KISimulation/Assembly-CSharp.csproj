@@ -58,11 +58,13 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Enemy\Spawning\ObstacleSpace.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_ATTACK.cs" />
+    <Compile Include="Assets\Scripts\Enemy\FSM\FSM_GROUP.cs" />
     <Compile Include="Assets\Scripts\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_IDLE.cs" />
-    <Compile Include="Assets\Scripts\Ground.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Spawning\Ground.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_EVADE.cs" />
     <Compile Include="Assets\Scripts\Enemy\Spawning\RandomSpawnpoint.cs" />
+    <Compile Include="Assets\Scripts\Enemy\FSM\WayPoints.cs" />
     <Compile Include="Assets\Scripts\Enemy\Spawning\RandomRotation.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_PATROL.cs" />
@@ -70,8 +72,6 @@
     <Compile Include="Assets\Scripts\Enemy\BoidManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\MyGameManager.cs" />
-    <Compile Include="Assets\Scripts\Enemy\FSM\FSM_GROUP.cs" />
-    <Compile Include="Assets\Scripts\Enemy\FSM\WayPoints.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -699,6 +699,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="NavMeshComponents.csproj">
+      <Project>{E570C05A-11E4-A8BE-3292-8EAAE2B5FB7E}</Project>
+      <Name>NavMeshComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="NavMeshComponentsEditor.csproj">
+      <Project>{73696CB0-E9F3-430E-4BFD-18B44F0AEB38}</Project>
+      <Name>NavMeshComponentsEditor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
