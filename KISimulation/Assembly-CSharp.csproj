@@ -64,7 +64,6 @@
     <Compile Include="Assets\Scripts\Enemy\Spawning\Ground.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_EVADE.cs" />
     <Compile Include="Assets\Scripts\Enemy\Spawning\RandomSpawnpoint.cs" />
-    <Compile Include="Assets\Scripts\Enemy\FSM\WayPoints.cs" />
     <Compile Include="Assets\Scripts\Enemy\Spawning\RandomRotation.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_PATROL.cs" />
@@ -699,13 +698,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="NavMeshComponents.csproj">
-      <Project>{E570C05A-11E4-A8BE-3292-8EAAE2B5FB7E}</Project>
-      <Name>NavMeshComponents</Name>
-    </ProjectReference>
     <ProjectReference Include="NavMeshComponentsEditor.csproj">
       <Project>{73696CB0-E9F3-430E-4BFD-18B44F0AEB38}</Project>
       <Name>NavMeshComponentsEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="NavMeshComponents.csproj">
+      <Project>{E570C05A-11E4-A8BE-3292-8EAAE2B5FB7E}</Project>
+      <Name>NavMeshComponents</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

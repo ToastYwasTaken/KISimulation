@@ -56,10 +56,10 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Tests\Editor\NavMeshSurfaceInPrefabTests.cs" />
-    <Compile Include="Assets\Tests\Editor\NavMeshSurfaceInPrefabVariantTests.cs" />
-    <Compile Include="Assets\Tests\Editor\PrefabSavingUtil.cs" />
     <Compile Include="Assets\Tests\Editor\NavMeshModifierVolumeInPrefabTests.cs" />
+    <Compile Include="Assets\Tests\Editor\NavMeshSurfaceInPrefabTests.cs" />
+    <Compile Include="Assets\Tests\Editor\PrefabSavingUtil.cs" />
+    <Compile Include="Assets\Tests\Editor\NavMeshSurfaceInPrefabVariantTests.cs" />
     <Compile Include="Assets\Tests\Editor\PrefabStageAutoSavingUtil.cs" />
   </ItemGroup>
   <ItemGroup>
