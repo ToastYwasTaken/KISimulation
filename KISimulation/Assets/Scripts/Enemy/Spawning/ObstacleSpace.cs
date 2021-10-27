@@ -58,7 +58,7 @@ public class ObstacleSpace : MonoBehaviour
                 int zFrom = (int)renderer.bounds.min.z;
                 int zTo = (int)renderer.bounds.max.z;
 
-                Debug.Log($"Obstacle {count}: xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
+                //Debug.Log($"Obstacle {count}: xFrom {xFrom} | xTo {xTo} | zFrom {zFrom} | zTo {zTo}");
 
                 //add to array
                 obstacleCoordinates[count, 0] = xFrom;

@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
 
     private bool isGrouped;
 
-    float speedMultiplier, maxVelocity;
+    float speedMultiplier = 2f, maxVelocity = 10f;
 
     #region BOIDS
     BoidManager boidManager;
@@ -73,6 +73,10 @@ public class Enemy : MonoBehaviour
         targetForce = boidManager.TargetForce;
 
         
+    }
+    private void Update()
+    {
+        CheckState();
     }
 
     #region Boids
@@ -206,25 +210,23 @@ public class Enemy : MonoBehaviour
     #endregion
 
     #region StateSwitches
-    private void Patrol()
+    private void SetFSM_PATROL()
     {
-        //Set delay before patroling
-        StartCoroutine("Delay");
         //Set state
         anim.SetBool("playerInReach", true);
     }
 
-    private void Attack()
+    private void SetFSM_ATTACK()
     {
 
     }
 
-    private void Evade()
+    private void SetFSM_EVADE()
     {
 
     }
 
-    private void Group()
+    private void SetFSM_GROUP()
     {
         boidManager.AddToBoidList(this);
         isGrouped = true;
@@ -235,9 +237,23 @@ public class Enemy : MonoBehaviour
     }
     #endregion
 
-    private IEnumerator Delay()
+    public void CheckState()
     {
-        yield return new WaitForSeconds(3f);
+        if ()
+        {
+            SetFSM_PATROL();
+        }
+        else if ()
+        {
+            SetFSM_GROUP();
+        }
+        else if ()
+        {
+            SetFSM_ATTACK();
+        }else if ()
+        {
+            SetFSM_EVADE();
+        }
     }
 
 }

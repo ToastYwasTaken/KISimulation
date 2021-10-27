@@ -32,10 +32,10 @@ using UnityEngine.AI;
 public class FSM : StateMachineBehaviour
 {
     #region important variables accessible from inheriting subclass behaviours
-    [SerializeField]
+    //[SerializeField]
     protected GameObject gameObject;
 
-    [SerializeField]
+    //[SerializeField]
     protected NavMeshAgent navMeshAgent;
 
     protected Vector3[] wayPoints;

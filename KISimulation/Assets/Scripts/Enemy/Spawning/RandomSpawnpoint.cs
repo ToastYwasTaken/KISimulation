@@ -109,7 +109,7 @@ public class RandomSpawnpoint : MonoBehaviour
             isValid = antiCrashCounter >= 1000;
         } while (!isValid);
         antiCrashCounter = 0;
-        Debug.Log("desired spawn position in RandomSpawnpoint: " + desiredSpawnPoint);
+        //Debug.Log("desired spawn position in RandomSpawnpoint: " + desiredSpawnPoint);
         spawnPointsList.Add(desiredSpawnPoint);
         return desiredSpawnPoint;
     }

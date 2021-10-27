@@ -31,13 +31,14 @@ public class FSM_IDLE : FSM
     private float rotationSpeed = 5f;
     private bool rotatingForward;
     private bool firstTimeExitingIdle = true;
-    //private float randomDelay = 2f;
+    //private float randomDelay = 2f
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Get a MonoBehaviour in scene
         monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
         SetRotationAndMultiplier();
+        //Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
     }
 
     //IDLE behaviour is coded here
@@ -68,6 +69,7 @@ public class FSM_IDLE : FSM
             rotatingForward = true;
             SetRotationAndMultiplier();
         }
+        //Debug.Log($"Update | GO: {gameObject} GO in base: {base.gameObject}");
     }
 
 

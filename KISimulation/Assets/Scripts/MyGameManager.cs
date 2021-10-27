@@ -77,6 +77,8 @@ public class MyGameManager : MonoBehaviour
             Debug.Log("Spawn Pos in GameManager: " + newSpawnPoint);
             //Instantiate the Prefab
             currentInstantiatedObject = Instantiate(enemyPrefab, newSpawnPoint, newSpawnRotation);
+            //Adjust names
+            currentInstantiatedObject.name = "Enemy_" + (pointer+1).ToString();
             //Safe the instantiated GO in the array
             enemiesInstantiatedArr[pointer] = currentInstantiatedObject;
             //increasing pointer when adding something to the array

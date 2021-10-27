@@ -19,23 +19,31 @@ using System.Linq;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
- *  26.10.2021  added patrol behaviour
+ *  26.10.2021  added patrol behaviour preconfiguration
+ *  27.10.2021  added patrol behaviour
  *  
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
     private float moveSpeed;
-    private Vector3 firstDestination;
+    private Vector3 agentDestination;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        firstDestination = SearchNearestPatrolPoint();
-        base.navMeshAgent.SetDestination(firstDestination);
+        //Setting agents first destination
+        agentDestination = SearchNearestPatrolPoint();
+        base.navMeshAgent.SetDestination(agentDestination);
+        Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        //Updating agents destination after reaching it
+        if(base.gameObject.transform.position == agentDestination)
+        {
+            agentDestination = SearchNearestPatrolPoint();
+            base.navMeshAgent.SetDestination(agentDestination);
+        }
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -49,7 +57,7 @@ public class FSM_PATROL : FSM
     /// <returns>Vector3 wayPoint</returns>
     private Vector3 SearchNearestPatrolPoint()
     {
-        int[] tempArr = new int[wayPoints.Length];
+        int[] tempArr = new int[base.wayPoints.Length];
         int leastValue = tempArr[0];
         int leastValueIndex = 0;
         for (int i = 0; i < base.wayPoints.Length; i++)
@@ -68,12 +76,19 @@ public class FSM_PATROL : FSM
             //comparing tempValues to get the least -> that one is the nearest wayPoint
             int tempLeastValue = tempArr[i];
             leastValueIndex = i;
+            //skip 0 bc that means the destination is already equal to the enemies current pos
+            if(tempLeastValue == 0)
+            {
+                continue;
+            }
             if (tempLeastValue < leastValue)
             {
+                //override leastValue
                 leastValue = tempLeastValue;
                 leastValueIndex = i;
             }
         }
+        Debug.Log("Least value: " + leastValue + " | index: " + leastValueIndex + " | corresponding wayPoint: " + base.wayPoints[leastValueIndex]);
         //get coordinates of wayPoints by getting same position as in tempArr
         return base.wayPoints[leastValueIndex];
     }
