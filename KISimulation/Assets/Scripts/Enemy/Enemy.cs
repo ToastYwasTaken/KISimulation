@@ -23,8 +23,6 @@ using UnityEngine;
  *****************************************************************************/
 public class Enemy : MonoBehaviour
 {
-    public Vector3 spawnPosition;
-
     [SerializeField]
     Animator anim;
 
@@ -32,9 +30,22 @@ public class Enemy : MonoBehaviour
 
     private FSM myFSMState;
 
-    private bool isGrouped;
-
     float speedMultiplier = 2f, maxVelocity = 10f;
+
+    #region Detection stuff
+    private GameObject playerGO;
+    private PlayerManager playerRef;
+
+    private float radiusPlayerInReach;
+    private float radiusNextToOtherEnemy;
+    private float playerSpottedAngle;
+
+    private bool idling;
+    private bool patroling;
+    private bool groupingUp;
+    private bool attacking;
+    private bool evading;
+    #endregion
 
     #region BOIDS
     BoidManager boidManager;
@@ -44,12 +55,14 @@ public class Enemy : MonoBehaviour
     private float cohesionRadius, alignmentRadius, separationRadius;
     private float cohesionForce, alignmentForce, separationForce, targetForce;
     #endregion
-    public bool IsGrouped { get => true; set => isGrouped = value; }
     public Vector3 Velocity { get => rb.velocity; }
 
     private void Awake()
     {
-        spawnPosition = transform.position;
+        //setting default stuff
+        idling = true;
+        playerGO = GameObject.FindGameObjectWithTag("Player");
+        playerRef = playerGO.GetComponent<PlayerManager>();
 
         //Initialize FSM
         myFSMState = anim.GetBehaviour<FSM>();
@@ -72,7 +85,7 @@ public class Enemy : MonoBehaviour
         separationForce = boidManager.SeparationForce;
         targetForce = boidManager.TargetForce;
 
-        
+
     }
     private void Update()
     {
@@ -210,49 +223,79 @@ public class Enemy : MonoBehaviour
     #endregion
 
     #region StateSwitches
+
+    private void SetFSM_IDLE()
+    {
+        idling = true;
+    }
     private void SetFSM_PATROL()
     {
         //Set state
         anim.SetBool("playerInReach", true);
+        patroling = true;
     }
 
     private void SetFSM_ATTACK()
     {
-
+        anim.SetBool("playerSpotted", true);
+        attacking = true;
     }
 
     private void SetFSM_EVADE()
     {
-
+        anim.SetBool("gettingHit", true);
+        evading = true;
     }
 
     private void SetFSM_GROUP()
     {
         boidManager.AddToBoidList(this);
-        isGrouped = true;
-
 
         enemyBoids = boidManager.EnemyBoids;
         anim.SetBool("nextToOtherEnemy", true);
+        groupingUp = true;
     }
     #endregion
 
     public void CheckState()
     {
-        if ()
+        if (idling)
+        {
+            CheckForPlayerInReach();
+        }
+        else if (patroling)
+        {
+            
+        }
+        else if (groupingUp)
+        {
+            
+        }
+        else if (attacking)
+        {
+            
+        }else if (evading)
+        {
+            
+        }
+    }
+
+    private void CheckForPlayerInReach()
+    {
+        //distance between player and enemy
+        float distanceToCheck = (playerRef.transform.position - this.transform.position).sqrMagnitude;
+        float offset = 0.3f;
+        //added offset to trigger sooner, otherwise the trigger only considers the objects pivots
+        if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) + offset)
         {
             SetFSM_PATROL();
+            patroling = true;
         }
-        else if ()
+        else
         {
-            SetFSM_GROUP();
-        }
-        else if ()
-        {
-            SetFSM_ATTACK();
-        }else if ()
-        {
-            SetFSM_EVADE();
+            //i think this is obsolete
+            SetFSM_IDLE();
+            idling = true;
         }
     }
 

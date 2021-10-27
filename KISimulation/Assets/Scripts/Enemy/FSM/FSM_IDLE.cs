@@ -44,7 +44,7 @@ public class FSM_IDLE : FSM
     //IDLE behaviour is coded here
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        currentRotationY = base.gameObject.transform.rotation.eulerAngles.y;
+        currentRotationY = animator.gameObject.transform.rotation.eulerAngles.y;
         //CASE: rotating forward AND currentRotationY > desiredRotationY
         if (rotatingForward && currentRotationY > desiredRotationY)
         {
@@ -55,12 +55,12 @@ public class FSM_IDLE : FSM
         //CASE: rotating forward AND currentRotationY < desiredRotationY
         else if (rotatingForward && currentRotationY < desiredRotationY)
         {
-            base.gameObject.transform.Rotate(new Vector3(0f, rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
+            animator.gameObject.transform.Rotate(new Vector3(0f, rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
         }
         //CASE: rotating backward AND currentRotationY > desiredRotationY
         else if (!rotatingForward && currentRotationY > desiredRotationY)
         {
-            base.gameObject.transform.Rotate(new Vector3(0f, -rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
+            animator.gameObject.transform.Rotate(new Vector3(0f, -rotationSpeed, 0f) * Time.deltaTime * rotationMultiplier, Space.Self);
         }
         //CASE: rotating backward AND currentRotationY < desiredRotationY
         else if (!rotatingForward && currentRotationY < desiredRotationY)
@@ -80,7 +80,6 @@ public class FSM_IDLE : FSM
         {
             base.AssignWayPoints();
             firstTimeExitingIdle = false;
-            base.SetNavMeshAgent(this.gameObject.GetComponent<NavMeshAgent>());
         }
     }
 

@@ -30,19 +30,20 @@ public class FSM_PATROL : FSM
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Setting agents first destination
+        //Initializing agent and setting agents first destination
         agentDestination = SearchNearestPatrolPoint();
-        base.navMeshAgent.SetDestination(agentDestination);
+        SetNavMeshAgent(this.gameObject.GetComponent<NavMeshAgent>());
+        navMeshAgent.SetDestination(agentDestination);
         Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Updating agents destination after reaching it
-        if(base.gameObject.transform.position == agentDestination)
+        if(animator.gameObject.transform.position == agentDestination)
         {
             agentDestination = SearchNearestPatrolPoint();
-            base.navMeshAgent.SetDestination(agentDestination);
+            navMeshAgent.SetDestination(agentDestination);
         }
     }
 
@@ -57,16 +58,16 @@ public class FSM_PATROL : FSM
     /// <returns>Vector3 wayPoint</returns>
     private Vector3 SearchNearestPatrolPoint()
     {
-        int[] tempArr = new int[base.wayPoints.Length];
+        int[] tempArr = new int[wayPoints.Length];
         int leastValue = tempArr[0];
         int leastValueIndex = 0;
-        for (int i = 0; i < base.wayPoints.Length; i++)
+        for (int i = 0; i < wayPoints.Length; i++)
         {
             //Search algorithm
-            int wayPointX = (int)base.wayPoints[i].x;
-            int wayPointZ = (int)base.wayPoints[i].z;
-            int playerPositionX = (int)base.gameObject.transform.position.x;
-            int playerPositionZ = (int)base.gameObject.transform.position.z;
+            int wayPointX = (int)wayPoints[i].x;
+            int wayPointZ = (int)wayPoints[i].z;
+            int playerPositionX = (int)gameObject.transform.position.x;
+            int playerPositionZ = (int)gameObject.transform.position.z;
             int tempValue = (wayPointX - playerPositionX)+(wayPointZ-playerPositionZ);
             tempArr[i] = tempValue;
         }
@@ -88,8 +89,8 @@ public class FSM_PATROL : FSM
                 leastValueIndex = i;
             }
         }
-        Debug.Log("Least value: " + leastValue + " | index: " + leastValueIndex + " | corresponding wayPoint: " + base.wayPoints[leastValueIndex]);
+        Debug.Log("Least value: " + leastValue + " | index: " + leastValueIndex + " | corresponding wayPoint: " + wayPoints[leastValueIndex]);
         //get coordinates of wayPoints by getting same position as in tempArr
-        return base.wayPoints[leastValueIndex];
+        return wayPoints[leastValueIndex];
     }
 }
