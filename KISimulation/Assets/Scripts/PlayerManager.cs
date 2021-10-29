@@ -33,8 +33,6 @@ public class PlayerManager : MonoBehaviour
     private Vector3 mousePos;
     #endregion
 
-    public Vector3 PlayerPosition { get => playerPos; }
-
     void Awake()
     {
         playerPos = transform.position;

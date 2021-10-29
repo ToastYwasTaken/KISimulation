@@ -19,37 +19,39 @@ using UnityEngine.AI;
  * ----------------------------
  *  07.10.2021  created
  *  26.10.2021  changed structure, FSM holds main information for all deriving behaviours
+ *  28.10.2021  "" and added ore methods to inherit
  *  
  *****************************************************************************/
 
 /// <summary>
 /// FSM states are:
-/// FSM_ATTACK, FSM_EVADE, FSM_IDLE, FSM_PATROL
-/// FSM bool switches are:
-/// playerInReach, playerSpotted, gettingHit
+/// FSM_ATTACK, FSM_EVADE, FSM_IDLE, FSM_PATROL, FSM_GROUP
 /// </summary>
 
 public class FSM : StateMachineBehaviour
 {
-    #region important variables accessible from inheriting subclass behaviours
-    //[SerializeField]
-    protected GameObject gameObject;
+    private GameObject playerGO;
+    private PlayerManager playerRef;
 
-    //[SerializeField]
+    private GameObject groundRef;
+    private Ground ground;
+
+    #region important variables accessible from inheriting subclass behaviours
+    protected Vector3 playerPosition;
+    protected Vector3 agentDestination;
+
     protected NavMeshAgent navMeshAgent;
 
     protected Vector3[] wayPoints;
     protected int wayPointsAmount;
     #endregion
-
-    private GameObject groundRef;
-    private Ground ground;
     /// <summary>
     /// Assigning waypoints relative to the size of the ground, ignores obstacles
     /// They are only assigned, as soon as the first enemy exits the IDLE state
     /// in order for the wayPoints to be already fully accessible in OnStateEnter() of PATROL
+    /// TODO: sh they are displayed twice in the scene
     /// </summary>
-    public void AssignWayPoints()
+    protected void AssignWayPoints()
     {
         //references needed to assign the waypoints
         groundRef = GameObject.FindGameObjectWithTag("Ground");
@@ -69,23 +71,35 @@ public class FSM : StateMachineBehaviour
             instantiatedWayPoint.transform.parent = GameObject.FindGameObjectWithTag("WayPointsMother").transform;
             //tagging
             instantiatedWayPoint.gameObject.tag = "WayPoint";
-            Debug.Log("waypoint at " + i + " is: " + wayPoints[i]);
+            //Debug.Log("waypoint at " + i + " is: " + wayPoints[i]);
         }
     }
 
-    /// <summary>
-    /// Sets the current enemy as referenced GO
-    /// </summary>
-    /// <param name="_gameObject">the gameobject of current enemy</param>
-    public void SetGO(GameObject _gameObject)
+    protected void AssignPlayerReferences()
     {
-        gameObject = _gameObject;
+        playerGO = GameObject.FindGameObjectWithTag("Player");
+        playerRef = playerGO.GetComponent<PlayerManager>();
     }
 
-    public void SetNavMeshAgent(NavMeshAgent _navMeshAgent)
+    protected void UpdatePlayerPosition()
+    {
+        playerPosition = playerRef.transform.position;
+    }
+
+    protected void SetNavMeshAgent(NavMeshAgent _navMeshAgent)
     {
         navMeshAgent = _navMeshAgent;
     }
 
-    
+    protected Vector3 SearchRandomWayPoint()
+    {
+        int randomCount = Random.Range(0, wayPointsAmount);
+        Vector3 randomWayPoint = wayPoints[randomCount];
+        return randomWayPoint;
+    }
+
+    protected bool DestinationReached()
+    {
+        return navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance;
+    }
 }

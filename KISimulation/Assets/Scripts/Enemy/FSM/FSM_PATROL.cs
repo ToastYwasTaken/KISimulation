@@ -21,28 +21,33 @@ using System.Linq;
  *  07.10.2021  created
  *  26.10.2021  added patrol behaviour preconfiguration
  *  27.10.2021  added patrol behaviour
+ *  28.10.2021  changed nearest wayPoint to random wayPoint
  *  
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
     private float moveSpeed;
-    private Vector3 agentDestination;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        //Assigning wayPoints & references
+        AssignWayPoints();
+        AssignPlayerReferences();
         //Initializing agent and setting agents first destination
-        agentDestination = SearchNearestPatrolPoint();
-        SetNavMeshAgent(this.gameObject.GetComponent<NavMeshAgent>());
+        agentDestination = SearchRandomWayPoint();
+        SetNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
         navMeshAgent.SetDestination(agentDestination);
-        Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
+        //Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Updating agents destination after reaching it
-        if(animator.gameObject.transform.position == agentDestination)
+        //destination reached -> next wayPoint
+        Debug.Log(animator.gameObject.transform.position + " | " + agentDestination);
+        if (DestinationReached())//animator.gameObject.transform.position == agentDestination)
         {
-            agentDestination = SearchNearestPatrolPoint();
+            Debug.Log("destination reached");
+            agentDestination = SearchRandomWayPoint();
             navMeshAgent.SetDestination(agentDestination);
         }
     }
@@ -52,45 +57,7 @@ public class FSM_PATROL : FSM
 
     }
 
-    /// <summary>
-    /// Returns nearest wayPoint for agent
-    /// </summary>
-    /// <returns>Vector3 wayPoint</returns>
-    private Vector3 SearchNearestPatrolPoint()
-    {
-        int[] tempArr = new int[wayPoints.Length];
-        int leastValue = tempArr[0];
-        int leastValueIndex = 0;
-        for (int i = 0; i < wayPoints.Length; i++)
-        {
-            //Search algorithm
-            int wayPointX = (int)wayPoints[i].x;
-            int wayPointZ = (int)wayPoints[i].z;
-            int playerPositionX = (int)gameObject.transform.position.x;
-            int playerPositionZ = (int)gameObject.transform.position.z;
-            int tempValue = (wayPointX - playerPositionX)+(wayPointZ-playerPositionZ);
-            tempArr[i] = tempValue;
-        }
-        
-        for (int i = 0; i < tempArr.Length; i++)
-        {
-            //comparing tempValues to get the least -> that one is the nearest wayPoint
-            int tempLeastValue = tempArr[i];
-            leastValueIndex = i;
-            //skip 0 bc that means the destination is already equal to the enemies current pos
-            if(tempLeastValue == 0)
-            {
-                continue;
-            }
-            if (tempLeastValue < leastValue)
-            {
-                //override leastValue
-                leastValue = tempLeastValue;
-                leastValueIndex = i;
-            }
-        }
-        Debug.Log("Least value: " + leastValue + " | index: " + leastValueIndex + " | corresponding wayPoint: " + wayPoints[leastValueIndex]);
-        //get coordinates of wayPoints by getting same position as in tempArr
-        return wayPoints[leastValueIndex];
-    }
+
+
+
 }

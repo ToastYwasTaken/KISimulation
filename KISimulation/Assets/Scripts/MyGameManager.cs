@@ -27,14 +27,13 @@ using TMPro;
  *****************************************************************************/
 public class MyGameManager : MonoBehaviour
 {
+    [SerializeField]
+    GameObject groundRef;
 
-    private GameObject [] enemiesInstantiatedArr;
-
+    [Header("Enemy-stuff")]
     [SerializeField]
     GameObject enemyPrefab;
 
-    [SerializeField]
-    GameObject groundRef;
 
     [SerializeField]
     int maxEnemyCount;
@@ -42,9 +41,9 @@ public class MyGameManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI textEnemies;
 
+    private GameObject [] enemiesInstantiatedArr;
     private GameObject currentInstantiatedObject;
     private int pointer;
-    //private bool firstEnemy;
 
     private void Awake()
     {

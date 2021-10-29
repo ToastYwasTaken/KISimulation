@@ -23,10 +23,24 @@ using UnityEngine.AI;
 public class FSM_ATTACK : FSM
 {
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        UpdatePlayerPosition();
+        agentDestination = playerPosition;
+        navMeshAgent.SetDestination(agentDestination);
+
+    }
+
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //access required components via the animator
+        UpdatePlayerPosition();
+        //if (playerPosition == agentDestination)
+        //{
+        //    playerPositionX = (int)playerPosition.x;
+        //    playerPositionZ = (int)playerPosition.z;
+        //    agentDestination = SearchNearestPatrolPoint(playerPositionX, playerPositionZ);
+        //    navMeshAgent.SetDestination(agentDestination);
+        //}
     }
 
 }

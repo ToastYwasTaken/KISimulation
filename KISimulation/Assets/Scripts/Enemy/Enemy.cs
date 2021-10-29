@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,9 +37,10 @@ public class Enemy : MonoBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
 
-    private float radiusPlayerInReach;
+    private float radiusPlayerInReach = 30f;
     private float radiusNextToOtherEnemy;
     private float playerSpottedAngle;
+    private float radiusPlayerSpotted = 15f;
 
     private bool idling;
     private bool patroling;
@@ -66,7 +68,6 @@ public class Enemy : MonoBehaviour
 
         //Initialize FSM
         myFSMState = anim.GetBehaviour<FSM>();
-        myFSMState.SetGO(this.gameObject);
 
         //Set Rigidbody
         rb = GetComponent<Rigidbody>();
@@ -85,6 +86,13 @@ public class Enemy : MonoBehaviour
         separationForce = boidManager.SeparationForce;
         targetForce = boidManager.TargetForce;
 
+        //Can be deleted later
+        GameObject debugSpherePrefab = Resources.Load("DebugSphere") as GameObject;
+        debugSpherePrefab.transform.localScale = new Vector3(radiusPlayerInReach, radiusPlayerInReach, radiusPlayerInReach);
+        Instantiate(debugSpherePrefab, this.transform);
+        GameObject debugSpherePrefab2 = Resources.Load("DebugSphere2") as GameObject;
+        debugSpherePrefab2.transform.localScale = new Vector3(radiusPlayerSpotted, radiusPlayerSpotted, radiusPlayerSpotted);
+        Instantiate(debugSpherePrefab2, this.transform);
 
     }
     private void Update()
@@ -265,29 +273,53 @@ public class Enemy : MonoBehaviour
         }
         else if (patroling)
         {
-            
+            CheckForOtherEnemyOrPlayerSpotted();
         }
         else if (groupingUp)
         {
-            
+            CheckForPlayerSpotted();
         }
         else if (attacking)
         {
-            
+            CheckForGettingHit();
         }else if (evading)
         {
-            
+            CheckForEvadedSuccessfull();
+
         }
+    }
+
+    private void CheckForEvadedSuccessfull()
+    {
+        
+    }
+
+    private void CheckForGettingHit()
+    {
+        
+    }
+
+    private void CheckForPlayerSpotted()
+    {
+        
+    }
+
+    private void CheckForOtherEnemyOrPlayerSpotted()
+    {
+        
     }
 
     private void CheckForPlayerInReach()
     {
         //distance between player and enemy
         float distanceToCheck = (playerRef.transform.position - this.transform.position).sqrMagnitude;
-        float offset = 0.3f;
+        //potentially add offset later
+        float offset = 0f;
         //added offset to trigger sooner, otherwise the trigger only considers the objects pivots
+        Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach * radiusPlayerInReach);
         if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) + offset)
         {
+            Debug.Log("Player is in reach");
             SetFSM_PATROL();
             patroling = true;
         }
@@ -298,5 +330,6 @@ public class Enemy : MonoBehaviour
             idling = true;
         }
     }
+
 
 }
