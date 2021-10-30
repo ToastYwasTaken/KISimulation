@@ -26,7 +26,6 @@ using System.Linq;
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
-    private float moveSpeed;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -35,20 +34,26 @@ public class FSM_PATROL : FSM
         AssignPlayerReferences();
         //Initializing agent and setting agents first destination
         agentDestination = SearchRandomWayPoint();
-        SetNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
+        AssignNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
         navMeshAgent.SetDestination(agentDestination);
         //Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
+        for (int i = 0; i < allGroupedEnemyAgents.Count; i++)
+        {
+            allGroupedEnemyAgents[i].Move(new Vector3(-0.5f, 0, 0.5f));
+        }
+
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //destination reached -> next wayPoint
-        Debug.Log(animator.gameObject.transform.position + " | " + agentDestination);
+        //Debug.Log(animator.gameObject.transform.position + " | " + agentDestination);
         if (DestinationReached())//animator.gameObject.transform.position == agentDestination)
         {
-            Debug.Log("destination reached");
+            //Debug.Log("destination reached");
             agentDestination = SearchRandomWayPoint();
             navMeshAgent.SetDestination(agentDestination);
+
         }
     }
 
@@ -56,8 +61,6 @@ public class FSM_PATROL : FSM
     {
 
     }
-
-
 
 
 }

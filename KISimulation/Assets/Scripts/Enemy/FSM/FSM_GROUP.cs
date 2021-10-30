@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 /******************************************************************************
  * Project: KISimulation
- * File: FSM_Group.cs
+ * File: FSM_GROUP.cs
  * Version: 1.01
  * Autor:  Franz Mörike (FM);
  * 
@@ -17,14 +18,15 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  25.10.2021  re-created
+ *  30.10.2021  added basic assignments
  *  
  *****************************************************************************/
 public class FSM_GROUP : FSM
 {
-
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        AssignPlayerReferences();
+        AssignGroupedAgents();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

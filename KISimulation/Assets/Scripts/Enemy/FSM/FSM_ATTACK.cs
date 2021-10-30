@@ -18,6 +18,7 @@ using UnityEngine.AI;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
+ *  30.10.2021  minor changes
  *  
  *****************************************************************************/
 public class FSM_ATTACK : FSM
@@ -25,6 +26,7 @@ public class FSM_ATTACK : FSM
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        AssignPlayerReferences();
         UpdatePlayerPosition();
         agentDestination = playerPosition;
         navMeshAgent.SetDestination(agentDestination);
@@ -34,13 +36,11 @@ public class FSM_ATTACK : FSM
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         UpdatePlayerPosition();
-        //if (playerPosition == agentDestination)
-        //{
-        //    playerPositionX = (int)playerPosition.x;
-        //    playerPositionZ = (int)playerPosition.z;
-        //    agentDestination = SearchNearestPatrolPoint(playerPositionX, playerPositionZ);
-        //    navMeshAgent.SetDestination(agentDestination);
-        //}
+        if (DestinationReached())
+        {
+            //Attack
+        }
+
     }
 
 }

@@ -20,6 +20,7 @@ using UnityEngine;
  *  07.10.2021  created
  *  17.10.2021  added boid behaviour
  *  20.10.2021  added method description
+ *  30.10.2021  deleted boids added Check methods and some variables
  *  
  *****************************************************************************/
 public class Enemy : MonoBehaviour
@@ -31,16 +32,20 @@ public class Enemy : MonoBehaviour
 
     private FSM myFSMState;
 
-    float speedMultiplier = 2f, maxVelocity = 10f;
+    public float ehealth = 100f;
+
+    float speedMultiplier = 1f, maxVelocity = 10f;
 
     #region Detection stuff
     private GameObject playerGO;
     private PlayerManager playerRef;
+    private Enemy[] otherEnemies;
+    public List<Enemy> enemyGroupedList;
 
-    private float radiusPlayerInReach = 30f;
-    private float radiusNextToOtherEnemy;
-    private float playerSpottedAngle;
-    private float radiusPlayerSpotted = 15f;
+    private float radiusPlayerInReach = 20f;
+    private float radiusNextToOtherEnemy = 4f;
+    private float playerSpottedAngle = 10f; //means a 10 degree wide tolerance to spot the player
+    private float currentAngle;
 
     private bool idling;
     private bool patroling;
@@ -49,22 +54,15 @@ public class Enemy : MonoBehaviour
     private bool evading;
     #endregion
 
-    #region BOIDS
-    BoidManager boidManager;
-
-    List<Enemy> enemyBoids;
-
-    private float cohesionRadius, alignmentRadius, separationRadius;
-    private float cohesionForce, alignmentForce, separationForce, targetForce;
-    #endregion
     public Vector3 Velocity { get => rb.velocity; }
 
     private void Awake()
     {
         //setting default stuff
-        idling = true;
         playerGO = GameObject.FindGameObjectWithTag("Player");
         playerRef = playerGO.GetComponent<PlayerManager>();
+        otherEnemies = FindObjectsOfType<Enemy>();
+        SetFSM_IDLE();
 
         //Initialize FSM
         myFSMState = anim.GetBehaviour<FSM>();
@@ -73,25 +71,12 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        //assign boids
-        boidManager = GameObject.FindGameObjectWithTag("BoidManager").GetComponent<BoidManager>();
-
-        //calculate radii and forces
-        float radius = transform.localScale.x / 2f;
-        cohesionRadius = radius * radius * 2f;
-        alignmentRadius = radius * radius * 2f;
-        separationRadius = radius * radius * radius;
-        cohesionForce = boidManager.CohesionForce;
-        alignmentForce = boidManager.AlignmentForce;
-        separationForce = boidManager.SeparationForce;
-        targetForce = boidManager.TargetForce;
-
         //Can be deleted later
         GameObject debugSpherePrefab = Resources.Load("DebugSphere") as GameObject;
         debugSpherePrefab.transform.localScale = new Vector3(radiusPlayerInReach, radiusPlayerInReach, radiusPlayerInReach);
         Instantiate(debugSpherePrefab, this.transform);
         GameObject debugSpherePrefab2 = Resources.Load("DebugSphere2") as GameObject;
-        debugSpherePrefab2.transform.localScale = new Vector3(radiusPlayerSpotted, radiusPlayerSpotted, radiusPlayerSpotted);
+        debugSpherePrefab2.transform.localScale = new Vector3(radiusNextToOtherEnemy, radiusNextToOtherEnemy, radiusNextToOtherEnemy);
         Instantiate(debugSpherePrefab2, this.transform);
 
     }
@@ -100,145 +85,20 @@ public class Enemy : MonoBehaviour
         CheckState();
     }
 
-    #region Boids
-    /// <summary>
-    /// Applies the boid forces on their movement
-    /// </summary>
-    public void ApplyBoidsMovement()
-    {
-        Vector3 target = CalculateTarget(boidManager.PlayerPos);
-        Vector3 separation = CalculateSeparation();
-        Vector3 cohesion = CalculateCohesion();
-        Vector3 alignment = CalculateAlignment();
-
-        Vector3 totalForce = separation * separationForce + cohesion * cohesionForce + alignment * alignmentForce + target * targetForce;
-        rb.AddForce(totalForce);
-    }
-
-    /// <summary>
-    /// Calculates the target position relative to player position
-    /// </summary>
-    /// <param name="_playerPos">player position</param>
-    /// <returns>target position</returns>
-    private Vector3 CalculateTarget(Vector3 _playerPos)
-    {
-        Vector3 target = (_playerPos - transform.position).normalized * speedMultiplier;
-        target -= rb.velocity;
-        if(target.magnitude > maxVelocity)
-        {
-            target = target.normalized * maxVelocity;
-        }
-        return target;
-    }
-
-    /// <summary>
-    /// Calculates separation between the boidds
-    /// </summary>
-    /// <returns>separation vector</returns>
-    private Vector3 CalculateSeparation()
-    {
-        Vector3 separation = Vector3.zero;
-        int numberOfBoidsTooClose = 0;
-        for (int i = 0; i < enemyBoids.Count; i++)
-        {
-            //assign the enemies in state group which are next to each other
-            Enemy neighbour = enemyBoids[i];
-            Vector3 tempSeparation = transform.position - neighbour.transform.position;
-            float distance = tempSeparation.magnitude;
-            //calculate separation if near to another enemy
-            if(distance > 0f && distance < separationRadius)
-            {
-                tempSeparation.Normalize();
-                tempSeparation /= distance;
-                separation += tempSeparation;
-                numberOfBoidsTooClose++;
-            }
-        }
-        //separating enemies if needed
-        if (numberOfBoidsTooClose > 0)
-        {
-            Vector3 separationAvg = separation / numberOfBoidsTooClose;
-            separationAvg = separationAvg.normalized * speedMultiplier;
-            Vector3 target = separationAvg - rb.velocity;
-            if (target.magnitude > maxVelocity)
-            {
-                target = target.normalized * maxVelocity;
-            }
-            return target;
-        }
-        return separation;
-    }
-
-    /// <summary>
-    /// calculates the alignment of the boids 
-    /// </summary>
-    /// <returns>alignment vector</returns>
-    private Vector3 CalculateAlignment()
-    {
-        Vector3 alignment = Vector3.zero;
-        int numberOfBoidsTooClose = 0;
-        for(int i = 0; i < enemyBoids.Count; i++)
-        {
-            Enemy neighbour = enemyBoids[i];
-            Vector3 separation = transform.position - neighbour.transform.position;
-            float distance = separation.magnitude;
-            if (distance > 0f && distance < alignmentRadius)
-            {
-                alignment += neighbour.Velocity.normalized;
-                numberOfBoidsTooClose++;
-            }
-        }
-        if(numberOfBoidsTooClose > 0)
-        {
-            Vector3 alignmentAvg = alignment / numberOfBoidsTooClose;
-            Vector3 target = alignmentAvg.normalized * speedMultiplier;
-            if(target.magnitude > maxVelocity)
-            {
-                alignmentAvg = alignmentAvg.normalized * maxVelocity;
-            }
-            return alignmentAvg;
-        }
-        return alignment;
-    }
-
-
-    /// <summary>
-    /// calculates cohesion of the boids
-    /// </summary>
-    /// <returns>cohesion vector</returns>
-    private Vector3 CalculateCohesion()
-    {
-        Vector3 cohesion = Vector3.zero;
-        int numberOfBoidsTooClose = 0;
-        for (int i = 0; i < enemyBoids.Count; i++)
-        {
-            Enemy neighbour = enemyBoids[i];
-            Vector3 separation = transform.position - neighbour.transform.position;
-            float distance = separation.magnitude;
-            if (distance > 0f && distance < cohesionRadius)
-            {
-                cohesion += neighbour.transform.position;
-                numberOfBoidsTooClose++;
-            }
-        }
-        if (numberOfBoidsTooClose > 0)
-        {
-            Vector3 cohesionAvg = cohesion / numberOfBoidsTooClose;
-            return CalculateTarget(cohesionAvg);
-        }
-        return cohesion;
-    }
-    #endregion
 
     #region StateSwitches
 
     private void SetFSM_IDLE()
     {
+        //set all per default to false
+        anim.SetBool("playerInReach", false);
+        anim.SetBool("playerSpotted", false);
+        anim.SetBool("gettingHit", false);
+        anim.SetBool("nextToOtherEnemy", false);
         idling = true;
     }
     private void SetFSM_PATROL()
     {
-        //Set state
         anim.SetBool("playerInReach", true);
         patroling = true;
     }
@@ -255,28 +115,29 @@ public class Enemy : MonoBehaviour
         evading = true;
     }
 
-    private void SetFSM_GROUP()
+    private void SetFSM_GROUP(Enemy _nearestEnemy)
     {
-        boidManager.AddToBoidList(this);
-
-        enemyBoids = boidManager.EnemyBoids;
-        anim.SetBool("nextToOtherEnemy", true);
         groupingUp = true;
+        enemyGroupedList = new List<Enemy>();
+        this.AddToGroupList(_nearestEnemy);
+        this.AddToGroupList(this);
+        anim.SetBool("nextToOtherEnemy", true);
+        groupingUp = false;
+        //go directly back to patroling
+        SetFSM_PATROL();
     }
     #endregion
 
-    public void CheckState()
+    private void CheckState()
     {
+        Debug.Log($"IDLING: {idling} | PATROLING: {patroling} | ATTACKING: {attacking} | EVADING: {evading}");
         if (idling)
         {
             CheckForPlayerInReach();
         }
         else if (patroling)
         {
-            CheckForOtherEnemyOrPlayerSpotted();
-        }
-        else if (groupingUp)
-        {
+            CheckForNextToOtherEnemy();
             CheckForPlayerSpotted();
         }
         else if (attacking)
@@ -285,51 +146,123 @@ public class Enemy : MonoBehaviour
         }else if (evading)
         {
             CheckForEvadedSuccessfull();
-
         }
     }
 
+    #region StateCheckers
+
+    /// <summary>
+    /// Checks if the enemy has evaded successfully
+    /// </summary>
     private void CheckForEvadedSuccessfull()
     {
-        
+        Vector3 directionToPlayer = playerRef.transform.position - this.transform.position;
+        //Raycast from enemy to player | if obstacle is between -> evaded successfully
+        Physics.Raycast(this.transform.position, directionToPlayer, out RaycastHit hit);
+        if((hit.transform.tag == "Obstacle"))
+        {
+            Debug.Log("evading was successfull");
+            evading = false;
+            SetFSM_PATROL();
+            return;
+        }
+
     }
 
+    /// <summary>
+    /// Checks if the enemy is getting hit by the player
+    /// </summary>
     private void CheckForGettingHit()
     {
-        
+        if(this.ehealth <= 50)
+        {
+            Debug.Log("Evading");
+            attacking = false;
+            patroling = false;
+            SetFSM_EVADE();
+            return;
+        }
     }
 
+    /// <summary>
+    /// Checks if the enemy can see the player 
+    /// </summary>
     private void CheckForPlayerSpotted()
     {
-        
+        Vector3 enemyToPlayerVector = this.transform.position - playerRef.transform.position;
+        //ignore y coordinate
+        enemyToPlayerVector.y = 0f;
+        Vector3 playerVectorForward = playerRef.transform.forward;
+        float dotProduct = Vector3.Dot(enemyToPlayerVector.normalized, playerVectorForward.normalized);
+        currentAngle = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
+        //Debug.Log("currentAngle: " + currentAngle);
+        if (currentAngle <= playerSpottedAngle)
+        {
+            Debug.Log("Player spotted -> attacking");
+            patroling = false;
+            SetFSM_ATTACK();
+            return;
+        }
     }
 
-    private void CheckForOtherEnemyOrPlayerSpotted()
+    /// <summary>
+    /// Checks if the enemy is near another enemy to group up with him
+    /// </summary>
+    private void CheckForNextToOtherEnemy()
     {
-        
+        Enemy nearestEnemy;
+        float enemyDistanceToCheck;
+        for (int i = 0; i < otherEnemies.Length; i++)
+        {
+            if(otherEnemies[i].gameObject == this.gameObject)
+            {
+                return;
+            }
+            enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).sqrMagnitude;
+            if(enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
+            {
+                nearestEnemy = otherEnemies[i];
+                Debug.Log("Other enemy in reach");
+                Debug.Log("nearestEnemy: " + nearestEnemy.name);
+                patroling = false;
+                SetFSM_GROUP(nearestEnemy);
+                return;
+            }
+        }
+
     }
 
+    /// <summary>
+    /// Checks if the player is in reach to start patroling
+    /// </summary>
     private void CheckForPlayerInReach()
     {
         //distance between player and enemy
         float distanceToCheck = (playerRef.transform.position - this.transform.position).sqrMagnitude;
-        //potentially add offset later
-        float offset = 0f;
-        //added offset to trigger sooner, otherwise the trigger only considers the objects pivots
-        Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach * radiusPlayerInReach);
-        if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) + offset)
+        //Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach*radiusPlayerInReach);
+        if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) )
         {
             Debug.Log("Player is in reach");
+            idling = false;
             SetFSM_PATROL();
-            patroling = true;
-        }
-        else
-        {
-            //i think this is obsolete
-            SetFSM_IDLE();
-            idling = true;
+            return;
         }
     }
+    #endregion
+    private void AddToGroupList(Enemy _enemyToAdd)
+    {
+        if (enemyGroupedList.Contains(_enemyToAdd)){
+            return;
+        } else enemyGroupedList.Add(_enemyToAdd);
+    }
 
+    private void OnDrawGizmos()
+    {
+        //DEBUG: shows player spotting mechanism
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(playerRef.transform.position, this.transform.position);
+        Gizmos.DrawLine(this.transform.position, this.transform.position + this.transform.forward * 2);
+
+    }
 
 }

@@ -20,6 +20,7 @@ using UnityEngine.AI;
  *  07.10.2021  created
  *  26.10.2021  changed structure, FSM holds main information for all deriving behaviours
  *  28.10.2021  "" and added ore methods to inherit
+ *  30.10.2021  added comments + multiple assign methods
  *  
  *****************************************************************************/
 
@@ -37,6 +38,8 @@ public class FSM : StateMachineBehaviour
     private Ground ground;
 
     #region important variables accessible from inheriting subclass behaviours
+    protected List<NavMeshAgent> allGroupedEnemyAgents;
+    protected NavMeshAgent leadingAgent;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 
@@ -44,7 +47,10 @@ public class FSM : StateMachineBehaviour
 
     protected Vector3[] wayPoints;
     protected int wayPointsAmount;
+
+    protected bool isGrouped;
     #endregion
+
     /// <summary>
     /// Assigning waypoints relative to the size of the ground, ignores obstacles
     /// They are only assigned, as soon as the first enemy exits the IDLE state
@@ -75,22 +81,54 @@ public class FSM : StateMachineBehaviour
         }
     }
 
+    /// <summary>
+    /// Assigning all agents, that act as group
+    /// </summary>
+    protected void AssignGroupedAgents()
+    {
+        GameObject[] allEnemyAgents = GameObject.FindGameObjectsWithTag("Enemy");
+        NavMeshAgent enemyAgent = null;
+        if(enemyAgent == null)
+        {
+            return;
+        }
+        foreach (GameObject agent in allEnemyAgents)
+        {
+            enemyAgent = agent.GetComponent<NavMeshAgent>();
+        }
+        allGroupedEnemyAgents.Add(enemyAgent);
+        leadingAgent = allGroupedEnemyAgents[0];
+    }
+    /// <summary>
+    /// Assigning references for te player to get access to the players position
+    /// </summary>
     protected void AssignPlayerReferences()
     {
         playerGO = GameObject.FindGameObjectWithTag("Player");
         playerRef = playerGO.GetComponent<PlayerManager>();
     }
 
+    /// <summary>
+    /// Updates the players position
+    /// </summary>
     protected void UpdatePlayerPosition()
     {
         playerPosition = playerRef.transform.position;
     }
 
-    protected void SetNavMeshAgent(NavMeshAgent _navMeshAgent)
+    /// <summary>
+    /// Assigns the NavMesh agent
+    /// </summary>
+    /// <param name="_navMeshAgent"></param>
+    protected void AssignNavMeshAgent(NavMeshAgent _navMeshAgent)
     {
         navMeshAgent = _navMeshAgent;
     }
 
+    /// <summary>
+    /// Returns a random waypoint for the nav mesh agent
+    /// </summary>
+    /// <returns></returns>
     protected Vector3 SearchRandomWayPoint()
     {
         int randomCount = Random.Range(0, wayPointsAmount);
@@ -98,6 +136,10 @@ public class FSM : StateMachineBehaviour
         return randomWayPoint;
     }
 
+    /// <summary>
+    /// Checks if the agent has reached his destination
+    /// </summary>
+    /// <returns>true, if destination reached</returns>
     protected bool DestinationReached()
     {
         return navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance;

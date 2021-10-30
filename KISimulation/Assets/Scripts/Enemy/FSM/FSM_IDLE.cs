@@ -19,12 +19,13 @@ using UnityEngine.AI;
  * ----------------------------
  *  07.10.2021  created
  *  23.10.2021  added IDLE behaviour
+ *  30.10.2021  temporarily deleted monosurrogate, prob unnessecary
  *  
  *****************************************************************************/
 public class FSM_IDLE : FSM
 {
     //TODO Add intermediate state with exitTime as extra node
-    private MonoBehaviour monoSurrogate;
+    //private MonoBehaviour monoSurrogate;
     private float desiredRotationY;
     private float currentRotationY;
     private int rotationMultiplier;
@@ -35,7 +36,7 @@ public class FSM_IDLE : FSM
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Get a MonoBehaviour in scene
-        monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
+        //monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
         SetRotationAndMultiplier();
         //Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
     }

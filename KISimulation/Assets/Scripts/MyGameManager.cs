@@ -67,13 +67,9 @@ public class MyGameManager : MonoBehaviour
             //Set random Spawnpoints and random Rotation
             RandomSpawnpoint randomSpawnPoint = groundRef.GetComponent<RandomSpawnpoint>();
             RandomRotation randomSpawnRotation = groundRef.GetComponent<RandomRotation>();
-            //if(pointer > 0)
-            //{
-            //    firstEnemy = false;
-            //}
             Vector3 newSpawnPoint = randomSpawnPoint.ReturnValidSpawnPoint();
             Quaternion newSpawnRotation = randomSpawnRotation.GenerateRandomRotation();
-            Debug.Log("Spawn Pos in GameManager: " + newSpawnPoint);
+            //Debug.Log("Spawn Pos in GameManager: " + newSpawnPoint);
             //Instantiate the Prefab
             currentInstantiatedObject = Instantiate(enemyPrefab, newSpawnPoint, newSpawnRotation);
             //Adjust names
