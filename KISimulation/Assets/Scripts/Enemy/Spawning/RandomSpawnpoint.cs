@@ -52,7 +52,6 @@ public class RandomSpawnpoint : MonoBehaviour
         cornerTopLeft = groundRef.GetCornerTopLeft;
         cornerTopRight = groundRef.GetCornerTopRight;
         cornerBotLeft = groundRef.GetCornerBotLeft;
-
         //Debug.Log("cornerTopLeft: " + cornerTopLeft + " | cornerTopRight: " + cornerTopRight + " | cornerBotLeft: " + cornerBotLeft);
     }
 

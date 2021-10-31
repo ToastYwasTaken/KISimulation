@@ -29,22 +29,20 @@ public class Enemy : MonoBehaviour
     Animator anim;
 
     private Rigidbody rb;
-
-    private FSM myFSMState;
-
+    
     public float ehealth = 100f;
 
-    float speedMultiplier = 1f, maxVelocity = 10f;
+    //float speedMultiplier = 1f, maxVelocity = 10f;
 
     #region Detection stuff
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
-    public List<Enemy> enemyGroupedList;
 
-    private float radiusPlayerInReach = 20f;
-    private float radiusNextToOtherEnemy = 4f;
-    private float playerSpottedAngle = 10f; //means a 10 degree wide tolerance to spot the player
+    private float radiusPlayerInReach = 20f;    //20f
+    private float radiusNextToOtherEnemy = 1.5f; //1.5f
+    private float playerSpottedAngle = 5f; //10f means a 10 degree wide tolerance to spot the player
+
     private float currentAngle;
 
     private bool idling;
@@ -64,19 +62,16 @@ public class Enemy : MonoBehaviour
         otherEnemies = FindObjectsOfType<Enemy>();
         SetFSM_IDLE();
 
-        //Initialize FSM
-        myFSMState = anim.GetBehaviour<FSM>();
-
         //Set Rigidbody
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
         //Can be deleted later
         GameObject debugSpherePrefab = Resources.Load("DebugSphere") as GameObject;
-        debugSpherePrefab.transform.localScale = new Vector3(radiusPlayerInReach, radiusPlayerInReach, radiusPlayerInReach);
+        debugSpherePrefab.transform.localScale = new Vector3(2*radiusPlayerInReach, 2*radiusPlayerInReach, 2*radiusPlayerInReach);
         Instantiate(debugSpherePrefab, this.transform);
         GameObject debugSpherePrefab2 = Resources.Load("DebugSphere2") as GameObject;
-        debugSpherePrefab2.transform.localScale = new Vector3(radiusNextToOtherEnemy, radiusNextToOtherEnemy, radiusNextToOtherEnemy);
+        debugSpherePrefab2.transform.localScale = new Vector3(2*radiusNextToOtherEnemy, 2*radiusNextToOtherEnemy, 2*radiusNextToOtherEnemy);
         Instantiate(debugSpherePrefab2, this.transform);
 
     }
@@ -115,12 +110,9 @@ public class Enemy : MonoBehaviour
         evading = true;
     }
 
-    private void SetFSM_GROUP(Enemy _nearestEnemy)
+    private void SetFSM_GROUP()
     {
         groupingUp = true;
-        enemyGroupedList = new List<Enemy>();
-        this.AddToGroupList(_nearestEnemy);
-        this.AddToGroupList(this);
         anim.SetBool("nextToOtherEnemy", true);
         groupingUp = false;
         //go directly back to patroling
@@ -210,26 +202,24 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void CheckForNextToOtherEnemy()
     {
-        Enemy nearestEnemy;
         float enemyDistanceToCheck;
         for (int i = 0; i < otherEnemies.Length; i++)
         {
             if(otherEnemies[i].gameObject == this.gameObject)
             {
-                return;
+                continue;
             }
-            enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).sqrMagnitude;
-            if(enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
+            enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).magnitude;
+            Debug.Log("distance between enemies: " + enemyDistanceToCheck + "radius * radius" + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
+            //Change state to FSM_GROUP when in reach 
+            if (enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
             {
-                nearestEnemy = otherEnemies[i];
                 Debug.Log("Other enemy in reach");
-                Debug.Log("nearestEnemy: " + nearestEnemy.name);
                 patroling = false;
-                SetFSM_GROUP(nearestEnemy);
+                SetFSM_GROUP();
                 return;
             }
         }
-
     }
 
     /// <summary>
@@ -249,12 +239,7 @@ public class Enemy : MonoBehaviour
         }
     }
     #endregion
-    private void AddToGroupList(Enemy _enemyToAdd)
-    {
-        if (enemyGroupedList.Contains(_enemyToAdd)){
-            return;
-        } else enemyGroupedList.Add(_enemyToAdd);
-    }
+
 
     private void OnDrawGizmos()
     {

@@ -34,12 +34,14 @@ public class MyGameManager : MonoBehaviour
     [SerializeField]
     GameObject enemyPrefab;
 
-
     [SerializeField]
     int maxEnemyCount;
 
     [SerializeField]
     TextMeshProUGUI textEnemies;
+
+    [SerializeField]
+    WayPoints wayPoints;
 
     private GameObject [] enemiesInstantiatedArr;
     private GameObject currentInstantiatedObject;
@@ -49,7 +51,10 @@ public class MyGameManager : MonoBehaviour
     {
         currentInstantiatedObject = null;
         enemiesInstantiatedArr = new GameObject[maxEnemyCount];
-        //firstEnemy = true;
+    }
+
+    private void Start()
+    {
     }
 
     /// <summary>
@@ -57,6 +62,10 @@ public class MyGameManager : MonoBehaviour
     /// </summary>
     public void SpawnEnemy()
     {
+        if(pointer == 0)
+        {
+            wayPoints.SpawnWayPoints();
+        }
         //Don't spawn more than maxEnemyCount enemies
         if (pointer >= maxEnemyCount)
         {
@@ -106,6 +115,8 @@ public class MyGameManager : MonoBehaviour
     {
         textEnemies.text = "Enemies: " + pointer.ToString();
     }
+
+
     
     
 }

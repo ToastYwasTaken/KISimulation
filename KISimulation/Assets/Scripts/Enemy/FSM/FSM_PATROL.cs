@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Linq;
 /******************************************************************************
  * Project: KISimulation
  * File: FSM_PATROL.cs
@@ -29,19 +26,19 @@ public class FSM_PATROL : FSM
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Assigning wayPoints & references
-        AssignWayPoints();
-        AssignPlayerReferences();
+        AssignAllReferences();
         //Initializing agent and setting agents first destination
         agentDestination = SearchRandomWayPoint();
         AssignNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
-        navMeshAgent.SetDestination(agentDestination);
-        //Debug.Log($"Enter | GO: {gameObject} GO in base: {base.gameObject}");
-        for (int i = 0; i < allGroupedEnemyAgents.Count; i++)
+        if (currentlyGroupedEnemyAgents != null)
         {
-            allGroupedEnemyAgents[i].Move(new Vector3(-0.5f, 0, 0.5f));
+            for (int i = 0; i < currentlyGroupedEnemyAgents.Count; i++)
+            {
+                currentlyGroupedEnemyAgents[i].SetDestination(agentDestination);
+            }
         }
-
+        else
+            navMeshAgent.SetDestination(agentDestination);
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -52,8 +49,15 @@ public class FSM_PATROL : FSM
         {
             //Debug.Log("destination reached");
             agentDestination = SearchRandomWayPoint();
-            navMeshAgent.SetDestination(agentDestination);
-
+            if (currentlyGroupedEnemyAgents != null)
+            {
+                for (int i = 0; i < currentlyGroupedEnemyAgents.Count; i++)
+                {
+                    currentlyGroupedEnemyAgents[i].SetDestination(agentDestination);
+                }
+            }
+            else
+                navMeshAgent.SetDestination(agentDestination);
         }
     }
 

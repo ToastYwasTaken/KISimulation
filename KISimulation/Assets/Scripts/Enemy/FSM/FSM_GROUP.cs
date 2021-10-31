@@ -25,8 +25,9 @@ public class FSM_GROUP : FSM
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        AssignPlayerReferences();
-        AssignGroupedAgents();
+        AssignAllReferences();
+        AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
+        AssignGroupedAgents(navMeshAgent);
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

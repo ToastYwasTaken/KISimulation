@@ -38,73 +38,37 @@ public class FSM : StateMachineBehaviour
     private Ground ground;
 
     #region important variables accessible from inheriting subclass behaviours
-    protected List<NavMeshAgent> allGroupedEnemyAgents;
-    protected NavMeshAgent leadingAgent;
+    protected List<NavMeshAgent> currentlyGroupedEnemyAgents;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 
     protected NavMeshAgent navMeshAgent;
 
-    protected Vector3[] wayPoints;
+    protected WayPoints wayPoints;
     protected int wayPointsAmount;
 
     protected bool isGrouped;
     #endregion
 
-    /// <summary>
-    /// Assigning waypoints relative to the size of the ground, ignores obstacles
-    /// They are only assigned, as soon as the first enemy exits the IDLE state
-    /// in order for the wayPoints to be already fully accessible in OnStateEnter() of PATROL
-    /// TODO: sh they are displayed twice in the scene
-    /// </summary>
-    protected void AssignWayPoints()
-    {
-        //references needed to assign the waypoints
-        groundRef = GameObject.FindGameObjectWithTag("Ground");
-        ground = groundRef.GetComponent<Ground>();
-        RandomSpawnpoint randomSpawnpointRef = groundRef.GetComponent<RandomSpawnpoint>();
-        //create as many waypoints as the lesser of width and height
-        wayPointsAmount = ground.GetAreaOfGround / (Mathf.Min(ground.GetCurrentWidthX, ground.GetCurrentHeightZ));
-        //assign array to fill with wayPoints
-        wayPoints = new Vector3[wayPointsAmount];
-        for (int i = 0; i < wayPoints.Length; i++)
-        {
-            wayPoints[i] = randomSpawnpointRef.ReturnValidSpawnPoint();
-            //Instantiate wayPoints at the desired positions
-            GameObject wayPoint = new GameObject("WayPoint");
-            GameObject instantiatedWayPoint = Instantiate(wayPoint, wayPoints[i], Quaternion.identity);
-            //Set WayPoints mother obj
-            instantiatedWayPoint.transform.parent = GameObject.FindGameObjectWithTag("WayPointsMother").transform;
-            //tagging
-            instantiatedWayPoint.gameObject.tag = "WayPoint";
-            //Debug.Log("waypoint at " + i + " is: " + wayPoints[i]);
-        }
-    }
 
     /// <summary>
     /// Assigning all agents, that act as group
     /// </summary>
-    protected void AssignGroupedAgents()
+    protected void AssignGroupedAgents(NavMeshAgent _currentAgent)
     {
-        GameObject[] allEnemyAgents = GameObject.FindGameObjectsWithTag("Enemy");
-        NavMeshAgent enemyAgent = null;
-        if(enemyAgent == null)
+        if (!currentlyGroupedEnemyAgents.Contains(_currentAgent)) 
         {
-            return;
+            currentlyGroupedEnemyAgents.Add(_currentAgent);
         }
-        foreach (GameObject agent in allEnemyAgents)
-        {
-            enemyAgent = agent.GetComponent<NavMeshAgent>();
-        }
-        allGroupedEnemyAgents.Add(enemyAgent);
-        leadingAgent = allGroupedEnemyAgents[0];
     }
+
     /// <summary>
     /// Assigning references for te player to get access to the players position
     /// </summary>
-    protected void AssignPlayerReferences()
+    protected void AssignAllReferences()
     {
         playerGO = GameObject.FindGameObjectWithTag("Player");
+        wayPoints = GameObject.FindGameObjectWithTag("WayPointsMother").GetComponent<WayPoints>();
         playerRef = playerGO.GetComponent<PlayerManager>();
     }
 
@@ -131,8 +95,9 @@ public class FSM : StateMachineBehaviour
     /// <returns></returns>
     protected Vector3 SearchRandomWayPoint()
     {
+        wayPointsAmount = wayPoints.wayPoints.Length;
         int randomCount = Random.Range(0, wayPointsAmount);
-        Vector3 randomWayPoint = wayPoints[randomCount];
+        Vector3 randomWayPoint = wayPoints.wayPoints[randomCount];
         return randomWayPoint;
     }
 

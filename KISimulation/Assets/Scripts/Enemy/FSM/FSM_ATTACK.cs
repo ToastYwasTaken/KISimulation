@@ -26,19 +26,20 @@ public class FSM_ATTACK : FSM
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        AssignPlayerReferences();
+        AssignAllReferences();
         UpdatePlayerPosition();
+        AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
         agentDestination = playerPosition;
         navMeshAgent.SetDestination(agentDestination);
-
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         UpdatePlayerPosition();
+        agentDestination = playerPosition;
         if (DestinationReached())
         {
-            //Attack
+            navMeshAgent.SetDestination(agentDestination);
         }
 
     }

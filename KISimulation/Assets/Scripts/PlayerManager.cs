@@ -27,6 +27,8 @@ public class PlayerManager : MonoBehaviour
     float playerSpeed;
     [SerializeField]
     CharacterController playerController;
+    [SerializeField]
+    Animator animator;
 
     #region Rotation
     private Vector3 playerPos;
@@ -52,9 +54,33 @@ public class PlayerManager : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-
         Vector3 direction = transform.right * horizontal + transform.forward * vertical;
         playerController.Move(direction * Time.deltaTime * playerSpeed);
+        Debug.Log(direction);
+        ////moving forward or right
+        //if (direction.x > 0)
+        //{
+        //    animator.SetBool("walkForward", true);
+        //}
+        ////moving forward or right
+        //else if (direction.z > 0)
+        //{
+        //    animator.SetBool("walkRight", true);
+        //}
+        ////moving back or left
+        //else if (direction.x < 0)
+        //{
+        //    animator.SetBool("walkBack", true);
+        //}
+        ////moving back or left
+        //else if (direction.z < 0)
+        //{
+        //    animator.SetBool("walkLeft", true);
+        //} else
+        //animator.SetBool("walkRight", false);
+        //animator.SetBool("walkForward", false);
+        //animator.SetBool("walkLeft", false);
+        //animator.SetBool("idling", true);
     }
 
     /// <summary>
