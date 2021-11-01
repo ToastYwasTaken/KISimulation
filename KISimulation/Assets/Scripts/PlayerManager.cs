@@ -56,31 +56,32 @@ public class PlayerManager : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = transform.right * horizontal + transform.forward * vertical;
         playerController.Move(direction * Time.deltaTime * playerSpeed);
-        Debug.Log(direction);
-        ////moving forward or right
-        //if (direction.x > 0)
-        //{
-        //    animator.SetBool("walkForward", true);
-        //}
-        ////moving forward or right
-        //else if (direction.z > 0)
-        //{
-        //    animator.SetBool("walkRight", true);
-        //}
-        ////moving back or left
-        //else if (direction.x < 0)
-        //{
-        //    animator.SetBool("walkBack", true);
-        //}
-        ////moving back or left
-        //else if (direction.z < 0)
-        //{
-        //    animator.SetBool("walkLeft", true);
-        //} else
-        //animator.SetBool("walkRight", false);
-        //animator.SetBool("walkForward", false);
-        //animator.SetBool("walkLeft", false);
-        //animator.SetBool("idling", true);
+        if (horizontal > 0)
+        {
+            Debug.Log("walking right");
+            animator.SetBool("walkRight", true);
+        }
+        else if (vertical > 0)
+        {
+            Debug.Log("walking forward");
+            animator.SetBool("walkForward", true);
+        }
+        else if (horizontal < 0)
+        {
+            Debug.Log("walking left");
+            animator.SetBool("walkLeft", true);
+        }
+        else if (vertical < 0)
+        {
+            Debug.Log("walking back");
+            animator.SetBool("walkBack", true);
+        }
+        else
+            animator.SetBool("walkRight", false);
+        animator.SetBool("walkForward", false);
+        animator.SetBool("walkLeft", false);
+        animator.SetBool("walkBack", false);
+        animator.SetBool("idling", true);
     }
 
     /// <summary>
