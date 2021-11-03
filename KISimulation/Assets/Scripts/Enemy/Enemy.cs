@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
-    private Enemy enemyInReach;
+    public Enemy enemyInReach;
 
     private float radiusPlayerInReach = 20f;    //20f
     private float radiusNextToOtherEnemy = 1.5f; //1.5f
@@ -54,8 +54,6 @@ public class Enemy : MonoBehaviour
     #endregion
 
     public Vector3 Velocity { get => rb.velocity; }
-
-    public Enemy EnemyInReach { get => enemyInReach; set => enemyInReach = value; }
     private void Awake()
     {
         //setting default stuff
@@ -209,14 +207,14 @@ public class Enemy : MonoBehaviour
             {
                 continue;
             }
-            enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).magnitude;
-            //Debug.Log("distance between enemies: " + enemyDistanceToCheck + "radius * radius" + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
+            enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).sqrMagnitude;
+            //Debug.Log("distance between enemies: " + enemyDistanceToCheck + " radius * radius: " + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
             //Change state to FSM_GROUP when in reach 
             if (enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
             {
                 //assign the enemy thats in reach
-                EnemyInReach = otherEnemies[i];
-                Debug.Log("Other enemy " + EnemyInReach + " in reach");
+                enemyInReach = otherEnemies[i];
+                Debug.Log("Other enemy " + enemyInReach + " in reach");
                 patroling = false;
                 SetFSM_GROUP();
                 return;
@@ -231,14 +229,15 @@ public class Enemy : MonoBehaviour
     {
         //distance between player and enemy
         float distanceToCheck = (playerRef.transform.position - this.transform.position).sqrMagnitude;
-        Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach*radiusPlayerInReach);
-        if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) )
+        //Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach*radiusPlayerInReach);
+        if (distanceToCheck < (radiusPlayerInReach * radiusPlayerInReach))
         {
             Debug.Log("Player is in reach");
             idling = false;
             SetFSM_PATROL();
             return;
         }
+        else SetFSM_IDLE();
     }
     #endregion
 

@@ -77,7 +77,6 @@ public class MyGameManager : MonoBehaviour
     /// </summary>
     public void SpawnEnemy()
     {
-        
         //Don't spawn more than maxEnemyCount enemies
         if (pointer >= maxEnemyCount)
         {
@@ -126,14 +125,6 @@ public class MyGameManager : MonoBehaviour
     private void AdjustEnemyCounter()
     {
         textEnemies.text = "Enemies: " + pointer.ToString();
-    }
-
-    private void AssignAllEnemies()
-    {
-        for (int i = 0; i < AllEnemies.Length; i++)
-        {
-             AllEnemies[i] = enemiesInstantiatedArr[i].GetComponent<Enemy>();
-        }
     }
 
 

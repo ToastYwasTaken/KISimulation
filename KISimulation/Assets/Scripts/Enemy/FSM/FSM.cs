@@ -43,6 +43,7 @@ public class FSM : StateMachineBehaviour
 
     #region important variables accessible from inheriting subclass behaviours
     protected Enemy thisEnemy;
+    protected Enemy motherOfEnemies;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 

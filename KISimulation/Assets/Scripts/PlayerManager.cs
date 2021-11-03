@@ -19,6 +19,7 @@ using UnityEngine;
  * ----------------------------
  *  05.10.2021  created
  *  23.10.2021  added method description
+ *  02.11.2021  added Attack mechanic
  *  
  *****************************************************************************/
 public class PlayerManager : MonoBehaviour
@@ -101,6 +102,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+
     private void OnDrawGizmos()
     {
         //DEBUG | Draw Line between mouse and playerposition 
@@ -111,9 +113,10 @@ public class PlayerManager : MonoBehaviour
         Gizmos.DrawLine(Camera.main.transform.position, mousePos);
     }
 
-    //TODO: make animator work
-    private void OnAnimatorMove()
-    {
-        transform.position += animator.deltaPosition;
-    }
+    ////TODO: make animator work
+    //private void OnAnimatorMove()
+    //{
+    //    transform.position += animator.deltaPosition;
+    //}
+
 }

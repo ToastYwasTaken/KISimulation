@@ -23,13 +23,32 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_GROUP : FSM
 {
+    private int numOfGroup = 1;
+    private Enemy otherEnemy;
+    
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         thisEnemy = animator.GetComponent<Enemy>();
-        AssignAllReferences();
-        AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
-        Enemy otherEnemy = thisEnemy.EnemyInReach;
+        otherEnemy = thisEnemy.enemyInReach;
+        //GroupEnemies();
+        //AssignAllReferences();
+        //AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
         animator.SetBool("nextToOtherEnemy", false);
-        animator.SetBool("playerInReach", true);
     }
+
+    //private void GroupEnemies()
+    //{
+    //    Debug.Log("Grouping enemies");
+    //    GameObject newEmptyMother = new GameObject();
+    //    newEmptyMother.AddComponent<Enemy>();
+    //    motherOfEnemies = newEmptyMother.GetComponent<Enemy>();
+    //    Instantiate(newEmptyMother);
+    //    newEmptyMother.transform.position = new Vector3(0, 0, 0);
+    //    newEmptyMother.transform.name = "MotherOfGroup" + numOfGroup.ToString();
+    //    newEmptyMother.transform.tag = "MotherOfGroup";
+    //    thisEnemy.transform.parent = newEmptyMother.transform;
+    //    otherEnemy.transform.parent = newEmptyMother.transform;
+    //    numOfGroup++;
+    //}
 }
+

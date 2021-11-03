@@ -31,7 +31,6 @@ public class FSM_IDLE : FSM
     private int rotationMultiplier;
     private float rotationSpeed = 5f;
     private bool rotatingForward;
-    //private float randomDelay = 2f
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
