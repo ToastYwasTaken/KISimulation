@@ -21,6 +21,7 @@ using UnityEngine;
  *  17.10.2021  added boid behaviour
  *  20.10.2021  added method description
  *  30.10.2021  deleted boids added Check methods and some variables
+ *              moved wayPoints assigning to own script -> calling from gameManager
  *  
  *****************************************************************************/
 public class Enemy : MonoBehaviour
@@ -38,22 +39,23 @@ public class Enemy : MonoBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
+    private Enemy enemyInReach;
 
     private float radiusPlayerInReach = 20f;    //20f
     private float radiusNextToOtherEnemy = 1.5f; //1.5f
-    private float playerSpottedAngle = 5f; //10f means a 10 degree wide tolerance to spot the player
+    private float playerSpottedAngle = 0f; //10f means a 10 degree wide tolerance to spot the player
 
     private float currentAngle;
 
     private bool idling;
     private bool patroling;
-    private bool groupingUp;
     private bool attacking;
     private bool evading;
     #endregion
 
     public Vector3 Velocity { get => rb.velocity; }
 
+    public Enemy EnemyInReach { get => enemyInReach; set => enemyInReach = value; }
     private void Awake()
     {
         //setting default stuff
@@ -66,13 +68,13 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        //Can be deleted later
-        GameObject debugSpherePrefab = Resources.Load("DebugSphere") as GameObject;
-        debugSpherePrefab.transform.localScale = new Vector3(2*radiusPlayerInReach, 2*radiusPlayerInReach, 2*radiusPlayerInReach);
-        Instantiate(debugSpherePrefab, this.transform);
-        GameObject debugSpherePrefab2 = Resources.Load("DebugSphere2") as GameObject;
-        debugSpherePrefab2.transform.localScale = new Vector3(2*radiusNextToOtherEnemy, 2*radiusNextToOtherEnemy, 2*radiusNextToOtherEnemy);
-        Instantiate(debugSpherePrefab2, this.transform);
+        //Can be deleted later //debugs inaccurate
+        //GameObject debugSpherePrefab = Resources.Load("DebugSphere") as GameObject;
+        //debugSpherePrefab.transform.localScale = new Vector3(radiusPlayerInReach*radiusPlayerInReach, radiusPlayerInReach*radiusPlayerInReach, radiusPlayerInReach*radiusPlayerInReach);
+        //Instantiate(debugSpherePrefab, this.transform);
+        //GameObject debugSpherePrefab2 = Resources.Load("DebugSphere2") as GameObject;
+        //debugSpherePrefab2.transform.localScale = new Vector3(radiusNextToOtherEnemy*radiusNextToOtherEnemy, radiusNextToOtherEnemy*radiusNextToOtherEnemy, radiusNextToOtherEnemy*radiusNextToOtherEnemy);
+        //Instantiate(debugSpherePrefab2, this.transform);
 
     }
     private void Update()
@@ -112,9 +114,7 @@ public class Enemy : MonoBehaviour
 
     private void SetFSM_GROUP()
     {
-        groupingUp = true;
         anim.SetBool("nextToOtherEnemy", true);
-        groupingUp = false;
         //go directly back to patroling
         SetFSM_PATROL();
     }
@@ -210,11 +210,13 @@ public class Enemy : MonoBehaviour
                 continue;
             }
             enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).magnitude;
-            Debug.Log("distance between enemies: " + enemyDistanceToCheck + "radius * radius" + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
+            //Debug.Log("distance between enemies: " + enemyDistanceToCheck + "radius * radius" + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
             //Change state to FSM_GROUP when in reach 
             if (enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
             {
-                Debug.Log("Other enemy in reach");
+                //assign the enemy thats in reach
+                EnemyInReach = otherEnemies[i];
+                Debug.Log("Other enemy " + EnemyInReach + " in reach");
                 patroling = false;
                 SetFSM_GROUP();
                 return;
@@ -229,7 +231,7 @@ public class Enemy : MonoBehaviour
     {
         //distance between player and enemy
         float distanceToCheck = (playerRef.transform.position - this.transform.position).sqrMagnitude;
-        //Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach*radiusPlayerInReach);
+        Debug.Log("distance to check: " + distanceToCheck + " | radius*radius: " + radiusPlayerInReach*radiusPlayerInReach);
         if (distanceToCheck < (radiusPlayerInReach*radiusPlayerInReach) )
         {
             Debug.Log("Player is in reach");
@@ -239,7 +241,6 @@ public class Enemy : MonoBehaviour
         }
     }
     #endregion
-
 
     private void OnDrawGizmos()
     {

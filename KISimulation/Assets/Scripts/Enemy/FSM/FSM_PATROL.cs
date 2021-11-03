@@ -30,15 +30,7 @@ public class FSM_PATROL : FSM
         //Initializing agent and setting agents first destination
         agentDestination = SearchRandomWayPoint();
         AssignNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
-        if (currentlyGroupedEnemyAgents != null)
-        {
-            for (int i = 0; i < currentlyGroupedEnemyAgents.Count; i++)
-            {
-                currentlyGroupedEnemyAgents[i].SetDestination(agentDestination);
-            }
-        }
-        else
-            navMeshAgent.SetDestination(agentDestination);
+        navMeshAgent.SetDestination(agentDestination);
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -49,15 +41,7 @@ public class FSM_PATROL : FSM
         {
             //Debug.Log("destination reached");
             agentDestination = SearchRandomWayPoint();
-            if (currentlyGroupedEnemyAgents != null)
-            {
-                for (int i = 0; i < currentlyGroupedEnemyAgents.Count; i++)
-                {
-                    currentlyGroupedEnemyAgents[i].SetDestination(agentDestination);
-                }
-            }
-            else
-                navMeshAgent.SetDestination(agentDestination);
+            navMeshAgent.SetDestination(agentDestination);
         }
     }
 

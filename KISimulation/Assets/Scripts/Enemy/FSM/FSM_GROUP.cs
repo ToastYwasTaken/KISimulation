@@ -25,18 +25,11 @@ public class FSM_GROUP : FSM
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        thisEnemy = animator.GetComponent<Enemy>();
         AssignAllReferences();
         AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
-        AssignGroupedAgents(navMeshAgent);
-    }
-
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-
-    }
-
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-
+        Enemy otherEnemy = thisEnemy.EnemyInReach;
+        animator.SetBool("nextToOtherEnemy", false);
+        animator.SetBool("playerInReach", true);
     }
 }

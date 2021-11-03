@@ -21,6 +21,8 @@ using UnityEngine.AI;
  *  26.10.2021  changed structure, FSM holds main information for all deriving behaviours
  *  28.10.2021  "" and added ore methods to inherit
  *  30.10.2021  added comments + multiple assign methods
+ * ----------------------------
+ * NOTE:    FSM_GROUP's only use is to group the two enemies when in reach, after that they instantly switch back to patrolling
  *  
  *****************************************************************************/
 
@@ -34,11 +36,13 @@ public class FSM : StateMachineBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
 
-    private GameObject groundRef;
-    private Ground ground;
+    //private Enemy[] allEnemies; //get from gameManager
+
+    //private GameObject groundRef;
+    //private Ground ground;
 
     #region important variables accessible from inheriting subclass behaviours
-    protected List<NavMeshAgent> currentlyGroupedEnemyAgents;
+    protected Enemy thisEnemy;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 
@@ -47,20 +51,17 @@ public class FSM : StateMachineBehaviour
     protected WayPoints wayPoints;
     protected int wayPointsAmount;
 
-    protected bool isGrouped;
     #endregion
 
 
-    /// <summary>
-    /// Assigning all agents, that act as group
+    /// <summary
+    /// Assigning all enemies from gameManager
     /// </summary>
-    protected void AssignGroupedAgents(NavMeshAgent _currentAgent)
-    {
-        if (!currentlyGroupedEnemyAgents.Contains(_currentAgent)) 
-        {
-            currentlyGroupedEnemyAgents.Add(_currentAgent);
-        }
-    }
+    //protected void AssignAllEnemies()
+    //{
+    //    allEnemies = GameObject.FindGameObjectWithTag("GameManager").GetComponent<MyGameManager>().AllEnemies;
+    //}
+
 
     /// <summary>
     /// Assigning references for te player to get access to the players position

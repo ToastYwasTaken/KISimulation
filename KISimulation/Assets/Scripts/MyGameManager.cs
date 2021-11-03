@@ -29,6 +29,7 @@ public class MyGameManager : MonoBehaviour
 {
     [SerializeField]
     GameObject groundRef;
+    private Ground ground;
 
     [Header("Enemy-stuff")]
     [SerializeField]
@@ -44,17 +45,31 @@ public class MyGameManager : MonoBehaviour
     WayPoints wayPoints;
 
     private GameObject [] enemiesInstantiatedArr;
+    private Enemy[] allEnemies;
     private GameObject currentInstantiatedObject;
     private int pointer;
+    private int counter = 0;
+
+    public Enemy[] AllEnemies { get => allEnemies; set => allEnemies = value; }
 
     private void Awake()
     {
         currentInstantiatedObject = null;
         enemiesInstantiatedArr = new GameObject[maxEnemyCount];
+        AllEnemies = new Enemy[maxEnemyCount];
     }
 
-    private void Start()
+    private void Update()
     {
+        if (!groundRef.TryGetComponent<Ground>(out ground).Equals(null))
+        {
+            if(counter == 0)
+            {
+                ground = groundRef.GetComponent<Ground>();
+                wayPoints.SpawnWayPoints();
+                counter++;
+            }
+        }
     }
 
     /// <summary>
@@ -62,10 +77,7 @@ public class MyGameManager : MonoBehaviour
     /// </summary>
     public void SpawnEnemy()
     {
-        if(pointer == 0)
-        {
-            wayPoints.SpawnWayPoints();
-        }
+        
         //Don't spawn more than maxEnemyCount enemies
         if (pointer >= maxEnemyCount)
         {
@@ -116,7 +128,13 @@ public class MyGameManager : MonoBehaviour
         textEnemies.text = "Enemies: " + pointer.ToString();
     }
 
+    private void AssignAllEnemies()
+    {
+        for (int i = 0; i < AllEnemies.Length; i++)
+        {
+             AllEnemies[i] = enemiesInstantiatedArr[i].GetComponent<Enemy>();
+        }
+    }
 
-    
-    
+
 }

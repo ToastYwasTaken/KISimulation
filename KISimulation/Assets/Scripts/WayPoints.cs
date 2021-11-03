@@ -1,5 +1,27 @@
 using UnityEngine;
-
+/******************************************************************************
+ * Project: KISimulation
+ * File: WayPoints.cs
+ * Version: 1.01
+ * Autor:  Franz Mörike (FM);
+ * 
+ * 
+ * These coded instructions, statements, and computer programs contain
+ * proprietary information of the author and are protected by Federal
+ * copyright law. They may not be disclosed to third parties or copied
+ * or duplicated in any form, in whole or in part, without the prior
+ * written consent of the author.
+ * 
+ * ChangeLog
+ * ----------------------------
+ *  31.10.2021  created
+ *  
+ * ----------------------------
+ * NOTE:    this script was originally handled in Enemy.cs, but moved here, bc 
+ *          the instantiation of waypoints is only needed once
+ *  
+ *  
+ *****************************************************************************/
 public class WayPoints : MonoBehaviour
 {
     private GameObject groundRef;
@@ -32,6 +54,8 @@ public class WayPoints : MonoBehaviour
             //tagging
             instantiatedWayPoint.gameObject.tag = "WayPoint";
             //Debug.Log("waypoint at " + i + " is: " + wayPoints[i]);
+            //destroy original bc not needed anymore
+            Destroy(wayPoint);
         }
     }
 }
