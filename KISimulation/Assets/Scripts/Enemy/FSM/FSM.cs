@@ -42,8 +42,7 @@ public class FSM : StateMachineBehaviour
     //private Ground ground;
 
     #region important variables accessible from inheriting subclass behaviours
-    protected Enemy thisEnemy;
-    protected Enemy motherOfEnemies;
+    protected EnemyGroup currentEnemyGroup;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 
@@ -53,15 +52,6 @@ public class FSM : StateMachineBehaviour
     protected int wayPointsAmount;
 
     #endregion
-
-
-    /// <summary
-    /// Assigning all enemies from gameManager
-    /// </summary>
-    //protected void AssignAllEnemies()
-    //{
-    //    allEnemies = GameObject.FindGameObjectWithTag("GameManager").GetComponent<MyGameManager>().AllEnemies;
-    //}
 
 
     /// <summary>

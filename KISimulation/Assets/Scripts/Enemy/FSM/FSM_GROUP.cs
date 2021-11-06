@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 /******************************************************************************
  * Project: KISimulation
  * File: FSM_GROUP.cs
@@ -19,36 +16,43 @@ using UnityEngine.AI;
  * ----------------------------
  *  25.10.2021  re-created
  *  30.10.2021  added basic assignments
+ *  06.11.2021  tried another possible fix for grouping enemies
  *  
  *****************************************************************************/
 public class FSM_GROUP : FSM
 {
-    private int numOfGroup = 1;
-    private Enemy otherEnemy;
-    
+    private Enemy thisEnemy;
+    private int groupCount = 1;
+
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+
         thisEnemy = animator.GetComponent<Enemy>();
-        otherEnemy = thisEnemy.enemyInReach;
-        //GroupEnemies();
-        //AssignAllReferences();
-        //AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
-        animator.SetBool("nextToOtherEnemy", false);
+
+        //if not instantiated -> create new enemyGroup & add thisEnemy
+        if (currentEnemyGroup == null || currentEnemyGroup.Size == 0)
+        {
+            string newGroupName = "EnemyGroup_" + groupCount.ToString();
+            currentEnemyGroup = new EnemyGroup(newGroupName);
+            currentEnemyGroup.AddMember(thisEnemy);
+            Debug.Log($"Created new enemyGroup: {newGroupName} and added enemy {thisEnemy.name}");
+            return;
+        }
+        //Check member count | no groups > 5
+        if(currentEnemyGroup.Size > 5)
+        {
+            //return to last behaviour -> TODO: need SetBool()?
+            return;
+        }
+        //add this Enemy if not already in enemyGroup
+        if (!currentEnemyGroup.GroupMembers.Contains(thisEnemy))    //was null
+        {
+            currentEnemyGroup.AddMember(thisEnemy);
+            thisEnemy.IsGrouped = true;
+            Debug.Log($"added {thisEnemy} to {currentEnemyGroup}");
+        }
+
     }
 
-    //private void GroupEnemies()
-    //{
-    //    Debug.Log("Grouping enemies");
-    //    GameObject newEmptyMother = new GameObject();
-    //    newEmptyMother.AddComponent<Enemy>();
-    //    motherOfEnemies = newEmptyMother.GetComponent<Enemy>();
-    //    Instantiate(newEmptyMother);
-    //    newEmptyMother.transform.position = new Vector3(0, 0, 0);
-    //    newEmptyMother.transform.name = "MotherOfGroup" + numOfGroup.ToString();
-    //    newEmptyMother.transform.tag = "MotherOfGroup";
-    //    thisEnemy.transform.parent = newEmptyMother.transform;
-    //    otherEnemy.transform.parent = newEmptyMother.transform;
-    //    numOfGroup++;
-    //}
 }
 

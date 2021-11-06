@@ -33,17 +33,20 @@ public class Enemy : MonoBehaviour
     
     public float ehealth = 100f;
 
+    private MyGameManager gameManager;
+
     //float speedMultiplier = 1f, maxVelocity = 10f;
 
     #region Detection stuff
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
-    public Enemy enemyInReach;
+    private Enemy enemyInReach;
+    private bool isGrouped;  //for FSM_GROUP
 
-    private float radiusPlayerInReach = 20f;    //20f
-    private float radiusNextToOtherEnemy = 1.5f; //1.5f
-    private float playerSpottedAngle = 0f; //10f means a 10 degree wide tolerance to spot the player
+    private float radiusPlayerInReach;
+    private float radiusNextToOtherEnemy;
+    private float playerSpottedAngle;
 
     private float currentAngle;
 
@@ -54,12 +57,18 @@ public class Enemy : MonoBehaviour
     #endregion
 
     public Vector3 Velocity { get => rb.velocity; }
+    public bool IsGrouped { get => isGrouped; set => isGrouped = value; }
+
     private void Awake()
     {
         //setting default stuff
         playerGO = GameObject.FindGameObjectWithTag("Player");
         playerRef = playerGO.GetComponent<PlayerManager>();
         otherEnemies = FindObjectsOfType<Enemy>();
+        gameManager = FindObjectOfType<MyGameManager>();
+        radiusPlayerInReach = gameManager.RadiusPlayerInReach;
+        radiusNextToOtherEnemy = gameManager.RadiusNextToOtherEnemy;
+        playerSpottedAngle = gameManager.PlayerSpottedAngle;
         SetFSM_IDLE();
 
         //Set Rigidbody
@@ -79,7 +88,6 @@ public class Enemy : MonoBehaviour
     {
         CheckState();
     }
-
 
     #region StateSwitches
 
@@ -247,7 +255,6 @@ public class Enemy : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(playerRef.transform.position, this.transform.position);
         Gizmos.DrawLine(this.transform.position, this.transform.position + this.transform.forward * 2);
-
     }
 
 }

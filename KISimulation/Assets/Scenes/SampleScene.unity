@@ -946,10 +946,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundRef: {fileID: 1299264142}
-  enemyPrefab: {fileID: 8447398445932920389, guid: 271b480fe5b6b6b4ea16b4717150b901, type: 3}
+  enemyPrefab: {fileID: 751272965459463917, guid: 271b480fe5b6b6b4ea16b4717150b901, type: 3}
   maxEnemyCount: 200
   textEnemies: {fileID: 358070175}
   wayPoints: {fileID: 627850186}
+  radiusPlayerInReach: 20
+  radiusNextToOtherEnemy: 1.5
+  playerSpottedAngle: 0
 --- !u!4 &929537678
 Transform:
   m_ObjectHideFlags: 0
@@ -2824,7 +2827,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5527794599646612851, guid: 4dcd9f6c9d8091e429c747dd847bc433, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5527794599646612851, guid: 4dcd9f6c9d8091e429c747dd847bc433, type: 3}
       propertyPath: m_CullingMode
@@ -2832,7 +2835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5527794599646612851, guid: 4dcd9f6c9d8091e429c747dd847bc433, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7441667225246167086, guid: 4dcd9f6c9d8091e429c747dd847bc433, type: 3}
       propertyPath: m_Enabled

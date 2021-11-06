@@ -50,7 +50,7 @@ public class WayPoints : MonoBehaviour
             GameObject instantiatedWayPoint = Instantiate(wayPoint, wayPoints[i], Quaternion.identity);
             instantiatedWayPoint.gameObject.name = "Waypoint " + (i + 1).ToString();
             //Set WayPoints mother obj
-            instantiatedWayPoint.transform.parent = GameObject.FindGameObjectWithTag("WayPointsMother").transform;
+            instantiatedWayPoint.transform.SetParent(GameObject.FindGameObjectWithTag("WayPointsMother").transform);
             //tagging
             instantiatedWayPoint.gameObject.tag = "WayPoint";
             //Debug.Log("waypoint at " + i + " is: " + wayPoints[i]);
