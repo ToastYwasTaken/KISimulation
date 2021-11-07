@@ -27,14 +27,11 @@ public class EnemyGroup
     public List<Enemy> GroupMembers { get => groupMembers;}
     public int Size{ get => size; }
 
-    //public EnemyGroup(List<Enemy> _members)
-    //{
-    //    groupMembers = _members;
-    //    size = _members.Count;
-    //}
+
     public EnemyGroup(string _name)
     {
         _name = name;
+        groupMembers = new List<Enemy>();
     }
 
     public void AddMember(Enemy _enemyToAdd)
@@ -43,5 +40,12 @@ public class EnemyGroup
         size++;
     }
     
+    public void DisplayEnemyGroup()
+    {
+        foreach (Enemy enemy in groupMembers)
+        {
+            Debug.Log("List member: " + enemy.name);
+        }
+    }
 }
 

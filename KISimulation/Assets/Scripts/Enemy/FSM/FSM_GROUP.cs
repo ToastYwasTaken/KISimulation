@@ -21,36 +21,51 @@ using UnityEngine;
  *****************************************************************************/
 public class FSM_GROUP : FSM
 {
-    private Enemy thisEnemy;
+    private Enemy thisEnemy, otherEnemy;
     private int groupCount = 1;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
         thisEnemy = animator.GetComponent<Enemy>();
+        otherEnemy = thisEnemy.enemyInReach;
+        if (!thisEnemy.IsGrouped && !otherEnemy.IsGrouped)
+        {
+            //if not instantiated -> create new enemyGroup & add thisEnemy
+            if (currentEnemyGroup == null || currentEnemyGroup.Size == 0)
+            {
+                string newGroupName = "EnemyGroup_" + groupCount.ToString();
+                currentEnemyGroup = new EnemyGroup(newGroupName);
+                currentEnemyGroup.AddMember(thisEnemy);
+                currentEnemyGroup.AddMember(otherEnemy);
+                thisEnemy.IsGrouped = true;
+                otherEnemy.IsGrouped = true;
+                Debug.Log($"Created new enemyGroup: {newGroupName} and added enemy {thisEnemy.name}");
+                //animator.SetBool("playerInReach", true);
+                //otherEnemy.GetComponent<Animator>().SetBool("playerInReach", true);
+            }
 
-        //if not instantiated -> create new enemyGroup & add thisEnemy
-        if (currentEnemyGroup == null || currentEnemyGroup.Size == 0)
-        {
-            string newGroupName = "EnemyGroup_" + groupCount.ToString();
-            currentEnemyGroup = new EnemyGroup(newGroupName);
-            currentEnemyGroup.AddMember(thisEnemy);
-            Debug.Log($"Created new enemyGroup: {newGroupName} and added enemy {thisEnemy.name}");
-            return;
+            //add this Enemy if not already in enemyGroup
+            if (!currentEnemyGroup.GroupMembers.Contains(thisEnemy))
+            {
+                currentEnemyGroup.AddMember(thisEnemy);
+                thisEnemy.IsGrouped = true;
+                Debug.Log($"added {thisEnemy} to {currentEnemyGroup}");
+            }
+            //add other Enemy if not already in enemyGroup
+            if (!currentEnemyGroup.GroupMembers.Contains(otherEnemy))
+            {
+                currentEnemyGroup.AddMember(otherEnemy);
+                otherEnemy.IsGrouped = true;
+            }
         }
-        //Check member count | no groups > 5
-        if(currentEnemyGroup.Size > 5)
+
+        //change states
+        for (int i = 0; i < currentEnemyGroup.Size; i++)
         {
-            //return to last behaviour -> TODO: need SetBool()?
-            return;
+            currentEnemyGroup.GroupMembers[i].anim.SetBool("playerInReach", true);
         }
-        //add this Enemy if not already in enemyGroup
-        if (!currentEnemyGroup.GroupMembers.Contains(thisEnemy))    //was null
-        {
-            currentEnemyGroup.AddMember(thisEnemy);
-            thisEnemy.IsGrouped = true;
-            Debug.Log($"added {thisEnemy} to {currentEnemyGroup}");
-        }
+
+        currentEnemyGroup.DisplayEnemyGroup();
 
     }
 

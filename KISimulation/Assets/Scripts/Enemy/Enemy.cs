@@ -27,7 +27,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    Animator anim;
+    public Animator anim;
 
     private Rigidbody rb;
     
@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
-    private Enemy enemyInReach;
+    public Enemy enemyInReach;
     private bool isGrouped;  //for FSM_GROUP
 
     private float radiusPlayerInReach;
@@ -222,7 +222,8 @@ public class Enemy : MonoBehaviour
             {
                 //assign the enemy thats in reach
                 enemyInReach = otherEnemies[i];
-                Debug.Log("Other enemy " + enemyInReach + " in reach");
+                Debug.Log($"This enemy [{this.name}] is in reach of Other enemy[{enemyInReach.name}]");
+                enemyInReach.SetFSM_GROUP();
                 patroling = false;
                 SetFSM_GROUP();
                 return;
