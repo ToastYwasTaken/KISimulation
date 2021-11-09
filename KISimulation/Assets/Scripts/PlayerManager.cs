@@ -20,14 +20,13 @@ using UnityEngine;
  *  05.10.2021  created
  *  23.10.2021  added method description
  *  02.11.2021  added Attack mechanic
+ *  09.11.2021  removed character controller, added movement via animation
  *  
  *****************************************************************************/
 public class PlayerManager : MonoBehaviour
 {
     [SerializeField]
     float playerSpeed;
-    [SerializeField]
-    CharacterController playerController;
     [SerializeField]
     Animator animator;
 
@@ -55,28 +54,28 @@ public class PlayerManager : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 direction = transform.right * horizontal + transform.forward * vertical;
-        playerController.Move(direction * Time.deltaTime * playerSpeed);
-        //if (horizontal > 0)
-        //{
-        //    Debug.Log("walking right");
-        //    animator.SetBool("walkRight", true);
-        //}
-        //else if (vertical != 0)
-        //{
-        //    Debug.Log("walking forward or back");
-        //    animator.SetBool("walkForwardOrBack", true);
-        //}
-        //else if (horizontal < 0)
-        //{
-        //    Debug.Log("walking left");
-        //    animator.SetBool("walkLeft", true);
-        //}
-        //else
-        //    animator.SetBool("walkRight", false);
-        //animator.SetBool("walkForwardorBack", false);
-        //animator.SetBool("walkLeft", false);
-        //animator.SetBool("idling", true);
+        if (horizontal > 0)
+        {
+            Debug.Log("walking right");
+            animator.SetBool("walkRight", true);
+        }
+        else
+         if (vertical > 0)
+        {
+            Debug.Log("walking forward");
+            animator.SetBool("walkForward", true);
+        }
+        else if (horizontal < 0)
+        {
+            Debug.Log("walking left");
+            animator.SetBool("walkLeft", true);
+        }
+        else
+        {
+            animator.SetBool("walkRight", false);
+            animator.SetBool("walkForward", false);
+            animator.SetBool("walkLeft", false);
+        }
     }
 
     /// <summary>
@@ -112,11 +111,5 @@ public class PlayerManager : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(Camera.main.transform.position, mousePos);
     }
-
-    ////TODO: make animator work
-    //private void OnAnimatorMove()
-    //{
-    //    transform.position += animator.deltaPosition;
-    //}
 
 }

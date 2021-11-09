@@ -30,7 +30,7 @@ public class FSM_GROUP : FSM
         otherEnemy = thisEnemy.enemyInReach;
         if (!thisEnemy.IsGrouped && !otherEnemy.IsGrouped)
         {
-            //if not instantiated -> create new enemyGroup & add thisEnemy
+            //if not instantiated -> create new enemyGroup & add thisEnemy and otherEnemy
             if (currentEnemyGroup == null || currentEnemyGroup.Size == 0)
             {
                 string newGroupName = "EnemyGroup_" + groupCount.ToString();
@@ -59,10 +59,13 @@ public class FSM_GROUP : FSM
             }
         }
 
-        //change states
-        for (int i = 0; i < currentEnemyGroup.Size; i++)
+        if(currentEnemyGroup.Size >= 0)
         {
-            currentEnemyGroup.GroupMembers[i].anim.SetBool("playerInReach", true);
+            //change states
+            for (int i = 0; i < currentEnemyGroup.Size; i++)
+            {
+                currentEnemyGroup.GroupMembers[i].anim.SetBool("playerInReach", true);
+            }
         }
 
         currentEnemyGroup.DisplayEnemyGroup();
