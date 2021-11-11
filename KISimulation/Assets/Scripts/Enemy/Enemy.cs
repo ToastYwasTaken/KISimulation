@@ -41,12 +41,13 @@ public class Enemy : MonoBehaviour
     private GameObject playerGO;
     private PlayerManager playerRef;
     private Enemy[] otherEnemies;
-    public Enemy enemyInReach;
+    private Enemy enemyInReach;
     private bool isGrouped;  //for FSM_GROUP
 
     private float radiusPlayerInReach;
     private float radiusNextToOtherEnemy;
     private float playerSpottedAngle;
+    private float playerSpottingDistance;
 
     private float currentAngle;
 
@@ -58,6 +59,7 @@ public class Enemy : MonoBehaviour
 
     public Vector3 Velocity { get => rb.velocity; }
     public bool IsGrouped { get => isGrouped; set => isGrouped = value; }
+    public Enemy EnemyInReach { get => enemyInReach; set => enemyInReach = value; }
 
     private void Awake()
     {
@@ -69,6 +71,7 @@ public class Enemy : MonoBehaviour
         radiusPlayerInReach = gameManager.RadiusPlayerInReach;
         radiusNextToOtherEnemy = gameManager.RadiusNextToOtherEnemy;
         playerSpottedAngle = gameManager.PlayerSpottedAngle;
+        playerSpottingDistance = gameManager.PlayerSpottingDistance;
         SetFSM_IDLE();
 
         //Set Rigidbody
@@ -121,8 +124,6 @@ public class Enemy : MonoBehaviour
     private void SetFSM_GROUP()
     {
         anim.SetBool("nextToOtherEnemy", true);
-        //go directly back to patroling
-        SetFSM_PATROL();
     }
     #endregion
 
@@ -187,19 +188,25 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void CheckForPlayerSpotted()
     {
-        Vector3 enemyToPlayerVector = this.transform.position - playerRef.transform.position;
-        //ignore y coordinate
-        enemyToPlayerVector.y = 0f;
-        Vector3 playerVectorForward = playerRef.transform.forward;
-        float dotProduct = Vector3.Dot(enemyToPlayerVector.normalized, playerVectorForward.normalized);
-        currentAngle = Mathf.Acos(dotProduct) * Mathf.Rad2Deg;
-        //Debug.Log("currentAngle: " + currentAngle);
-        if (currentAngle <= playerSpottedAngle)
+        //Check for correct spotting distance
+        if (Vector3.Distance(transform.position, playerRef.transform.position) < playerSpottingDistance) 
         {
-            Debug.Log("Player spotted -> attacking");
-            patroling = false;
-            SetFSM_ATTACK();
-            return;
+            //Debug.Log("Enemy in spottable distance of player");
+            Vector3 enemyToPlayerVector = playerRef.transform.position - this.transform.position;
+            float angleEnemyPlayer = Vector3.Angle(transform.forward, enemyToPlayerVector.normalized);
+            //Debug.Log("currentAngle: " + angleEnemyPlayer + " player spotted angle: " + playerSpottedAngle);
+            //Check for correct spotting angle
+            if (angleEnemyPlayer < playerSpottedAngle)
+            {
+                //Check if something in between
+                if (Physics.Linecast(enemyToPlayerVector, playerRef.transform.position))
+                {
+                    Debug.Log("Player spotted -> attacking");
+                    patroling = false;
+                    SetFSM_ATTACK();
+                    return;
+                }
+            }
         }
     }
 
@@ -211,19 +218,21 @@ public class Enemy : MonoBehaviour
         float enemyDistanceToCheck;
         for (int i = 0; i < otherEnemies.Length; i++)
         {
+            //Exclude self
             if(otherEnemies[i].gameObject == this.gameObject)
             {
                 continue;
             }
             enemyDistanceToCheck = (otherEnemies[i].transform.position-this.transform.position).sqrMagnitude;
+            
             //Debug.Log("distance between enemies: " + enemyDistanceToCheck + " radius * radius: " + radiusNextToOtherEnemy*radiusNextToOtherEnemy);
-            //Change state to FSM_GROUP when in reach 
+            
+            //Change state to FSM_GROUP when other enemy is in reach 
             if (enemyDistanceToCheck < radiusNextToOtherEnemy * radiusNextToOtherEnemy)
             {
                 //assign the enemy thats in reach
-                enemyInReach = otherEnemies[i];
-                Debug.Log($"This enemy [{this.name}] is in reach of Other enemy[{enemyInReach.name}]");
-                enemyInReach.SetFSM_GROUP();
+                EnemyInReach = otherEnemies[i];
+                //Debug.Log($"This enemy [{this.name}] is in reach of Other enemy[{EnemyInReach.name}]");
                 patroling = false;
                 SetFSM_GROUP();
                 return;

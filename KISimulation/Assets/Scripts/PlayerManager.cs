@@ -27,8 +27,8 @@ public class PlayerManager : MonoBehaviour
 {
     [SerializeField]
     float playerSpeed;
-    [SerializeField]
-    Animator animator;
+
+    private CharacterController characterController;
 
     #region Rotation
     private Vector3 playerPos;
@@ -38,6 +38,7 @@ public class PlayerManager : MonoBehaviour
     void Awake()
     {
         playerPos = transform.position;
+        characterController = this.GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -54,28 +55,8 @@ public class PlayerManager : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        if (horizontal > 0)
-        {
-            Debug.Log("walking right");
-            animator.SetBool("walkRight", true);
-        }
-        else
-         if (vertical > 0)
-        {
-            Debug.Log("walking forward");
-            animator.SetBool("walkForward", true);
-        }
-        else if (horizontal < 0)
-        {
-            Debug.Log("walking left");
-            animator.SetBool("walkLeft", true);
-        }
-        else
-        {
-            animator.SetBool("walkRight", false);
-            animator.SetBool("walkForward", false);
-            animator.SetBool("walkLeft", false);
-        }
+        Vector3 direction = transform.right * horizontal + transform.forward * vertical;
+        characterController.Move(direction * playerSpeed * Time.deltaTime);
     }
 
     /// <summary>

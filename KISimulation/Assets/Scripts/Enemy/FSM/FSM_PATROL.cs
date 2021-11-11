@@ -23,21 +23,22 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
-
+    private EnemyGroup currentEnemyGroup;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        //Initializing agent destination and references
         AssignAllReferences();
-        //Initializing agent and setting agents first destination
         agentDestination = SearchRandomWayPoint();
         AssignNavMeshAgent(animator.gameObject.GetComponent<NavMeshAgent>());
         navMeshAgent.SetDestination(agentDestination);
+
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //destination reached -> next wayPoint
         //Debug.Log(animator.gameObject.transform.position + " | " + agentDestination);
-        if (DestinationReached())//animator.gameObject.transform.position == agentDestination)
+        if (DestinationReached())
         {
             //Debug.Log("destination reached");
             agentDestination = SearchRandomWayPoint();

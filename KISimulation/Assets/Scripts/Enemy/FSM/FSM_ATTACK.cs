@@ -24,8 +24,13 @@ using UnityEngine.AI;
 public class FSM_ATTACK : FSM
 {
 
+    private EnemyGroup currentEnemyGroup;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        //Get enemy group
+        FSM_GROUP fsmGroup = animator.GetBehaviour<FSM_GROUP>();
+        currentEnemyGroup = fsmGroup.CurrentEnemyGroup;
+
         AssignAllReferences();
         UpdatePlayerPosition();
         AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());

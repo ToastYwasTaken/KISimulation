@@ -16,22 +16,22 @@ using UnityEngine;
  * 
  * ChangeLog
  * ----------------------------
- *  06.11.2021  created as helper for grouping mechanism
+ *  06.11.2021  created as helper-class for grouping mechanism
  *  
  *****************************************************************************/
 public class EnemyGroup 
 {
-    private List<Enemy> groupMembers;
+    private List<Enemy> groupMembers = new List<Enemy>();
     private int size;
-    private string name;
+    public string name;
     public List<Enemy> GroupMembers { get => groupMembers;}
     public int Size{ get => size; }
 
 
     public EnemyGroup(string _name)
     {
+        size = 0;
         _name = name;
-        groupMembers = new List<Enemy>();
     }
 
     public void AddMember(Enemy _enemyToAdd)

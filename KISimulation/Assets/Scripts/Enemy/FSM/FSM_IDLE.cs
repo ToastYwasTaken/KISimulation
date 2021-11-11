@@ -31,9 +31,13 @@ public class FSM_IDLE : FSM
     private int rotationMultiplier;
     private float rotationSpeed = 5f;
     private bool rotatingForward;
+    private EnemyGroup currentEnemyGroup;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        //Get enemy group
+        FSM_GROUP fsmGroup = animator.GetBehaviour<FSM_GROUP>();
+        currentEnemyGroup = fsmGroup.CurrentEnemyGroup;
         //Get a MonoBehaviour in scene
         //monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
         SetRotationAndMultiplier();

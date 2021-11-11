@@ -56,13 +56,16 @@ public class MyGameManager : MonoBehaviour
     [SerializeField]
     private float radiusNextToOtherEnemy = 4f; //DEFAULT: 1.5f
     [SerializeField]
-    private float playerSpottedAngle = 0f; //DEFAULT: 10f (means a x degree wide tolerance to spot the player)
+    private float playerSpottedAngle = 10f; //DEFAULT: 10f (means a x degree wide tolerance to spot the player)
+    [SerializeField]
+    private float playerSpottingDistance = 25f; //Default 25f
     #endregion
 
     public Enemy[] AllEnemies { get => allEnemies; set => allEnemies = value; }
     public float RadiusPlayerInReach { get => radiusPlayerInReach;}
     public float RadiusNextToOtherEnemy { get => radiusNextToOtherEnemy;}
     public float PlayerSpottedAngle { get => playerSpottedAngle;}
+    public float PlayerSpottingDistance { get => playerSpottingDistance; set => playerSpottingDistance = value; }
 
     private void Awake()
     {

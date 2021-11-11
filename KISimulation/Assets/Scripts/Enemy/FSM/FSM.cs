@@ -42,7 +42,6 @@ public class FSM : StateMachineBehaviour
     //private Ground ground;
 
     #region important variables accessible from inheriting subclass behaviours
-    protected EnemyGroup currentEnemyGroup;
     protected Vector3 playerPosition;
     protected Vector3 agentDestination;
 
@@ -50,7 +49,6 @@ public class FSM : StateMachineBehaviour
 
     protected WayPoints wayPoints;
     protected int wayPointsAmount;
-
     #endregion
 
 
