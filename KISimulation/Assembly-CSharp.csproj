@@ -70,7 +70,7 @@
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_PATROL.cs" />
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
-    <Compile Include="Assets\Scripts\Enemy\EnemyGroup.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyGroups.cs" />
     <Compile Include="Assets\Scripts\MyGameManager.cs" />
     <Compile Include="Assets\Scripts\WayPoints.cs" />
   </ItemGroup>

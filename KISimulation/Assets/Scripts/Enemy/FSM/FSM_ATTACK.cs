@@ -26,7 +26,7 @@ public class FSM_ATTACK : FSM
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Get enemy group
-        EnemyGroups.GetAllGroups();
+        List<List<Enemy>> groups = EnemyGroups.mainGroupList;
 
         AssignAllReferences();
         UpdatePlayerPosition();

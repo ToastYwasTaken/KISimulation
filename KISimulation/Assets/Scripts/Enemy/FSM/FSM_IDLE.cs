@@ -35,7 +35,7 @@ public class FSM_IDLE : FSM
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Get enemy group
-        EnemyGroups.GetAllGroups();
+        List<List<Enemy>> groups = EnemyGroups.mainGroupList;
 
         //Get a MonoBehaviour in scene
         //monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
