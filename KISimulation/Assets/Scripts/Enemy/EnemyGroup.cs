@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 /******************************************************************************
  * Project: KISimulation
- * File: EnemyGroup.cs
+ * File: EnemyGroups.cs
  * Version: 1.01
  * Autor:  Franz Mörike (FM);
  * 
@@ -17,35 +17,25 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  06.11.2021  created as helper-class for grouping mechanism
+ *  15.11.2021  re-considered functionability to make this class hold all lists of enemygroups
  *  
  *****************************************************************************/
-public class EnemyGroup 
+public static class EnemyGroups
 {
-    private List<Enemy> groupMembers = new List<Enemy>();
-    private int size;
-    public string name;
-    public List<Enemy> GroupMembers { get => groupMembers;}
-    public int Size{ get => size; }
+    private static List<List<Enemy>> allGroups = new List<List<Enemy>>();
+    public static int size = 0;
 
-
-    public EnemyGroup(string _name)
+    public static void SaveCurrentGroup(List<Enemy> _groupToSave)
     {
-        size = 0;
-        _name = name;
-    }
-
-    public void AddMember(Enemy _enemyToAdd)
-    {
-        groupMembers.Add(_enemyToAdd);
         size++;
+        allGroups.Add(_groupToSave);
     }
-    
-    public void DisplayEnemyGroup()
+
+    public static List<List<Enemy>> GetAllGroups()
     {
-        foreach (Enemy enemy in groupMembers)
-        {
-            Debug.Log("List member: " + enemy.name);
-        }
+        return allGroups;
     }
+
+
 }
 

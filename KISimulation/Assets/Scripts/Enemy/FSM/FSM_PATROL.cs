@@ -23,7 +23,6 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_PATROL : FSM
 {
-    private EnemyGroup currentEnemyGroup;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Initializing agent destination and references

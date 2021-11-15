@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 /******************************************************************************
  * Project: KISimulation
  * File: FSM_GROUP.cs
@@ -23,9 +24,7 @@ using UnityEngine.AI;
 public class FSM_GROUP : FSM
 {
     private Enemy thisEnemy, otherEnemy;
-    private int groupCount = 1;
-    private EnemyGroup currentEnemyGroup;
-    public EnemyGroup CurrentEnemyGroup { get => currentEnemyGroup; set => currentEnemyGroup = value; }
+    private List<Enemy> currentGroup = new List<Enemy>();
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -33,49 +32,55 @@ public class FSM_GROUP : FSM
         AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
         thisEnemy = animator.GetComponent<Enemy>();
         otherEnemy = thisEnemy.EnemyInReach;
+        //Is any of the current colliding enemies not grouped?
         if (!thisEnemy.IsGrouped && !otherEnemy.IsGrouped)
         {
             //if not instantiated -> create new enemyGroup & add thisEnemy and otherEnemy
-            if (CurrentEnemyGroup == null || CurrentEnemyGroup.Size == 0)
+            if (currentGroup == null || currentGroup.Count == 0)
             {
-                string newGroupName = "EnemyGroup_" + groupCount.ToString();
-                CurrentEnemyGroup = new EnemyGroup(newGroupName);
-                CurrentEnemyGroup.AddMember(thisEnemy);
-                CurrentEnemyGroup.AddMember(otherEnemy);
+                string newGroupName = "EnemyGroup_" + (EnemyGroups.size+1);
+                currentGroup = new List<Enemy>();
+                currentGroup.Add(thisEnemy);
+                currentGroup.Add(otherEnemy);
                 thisEnemy.IsGrouped = true;
                 otherEnemy.IsGrouped = true;
+                EnemyGroups.SaveCurrentGroup(currentGroup);
                 //Debug.Log($"Created new enemyGroup: {newGroupName} and added enemy {thisEnemy.name}");
                 //animator.SetBool("playerInReach", true);
                 //otherEnemy.GetComponent<Animator>().SetBool("playerInReach", true);
             }
         }
-        //add this Enemy if not already in enemyGroup
-        if (!CurrentEnemyGroup.GroupMembers.Contains(thisEnemy))
-        {
-            CurrentEnemyGroup.AddMember(thisEnemy);
-            thisEnemy.IsGrouped = true;
-            Debug.Log($"added {thisEnemy} to {CurrentEnemyGroup}");
-        }
-        //add other Enemy if not already in enemyGroup
-        if (!CurrentEnemyGroup.GroupMembers.Contains(otherEnemy))
-        {
-            CurrentEnemyGroup.AddMember(otherEnemy);
-            otherEnemy.IsGrouped = true;
-        }
-        if (currentEnemyGroup != null)
-        {
-            CurrentEnemyGroup.DisplayEnemyGroup();
+        if (currentGroup != null)
+        {        
+            //add this Enemy if not already in enemyGroup
+            if (!currentGroup.Contains(thisEnemy))
+            {
+                currentGroup.Add(thisEnemy);
+                thisEnemy.IsGrouped = true;
+                Debug.Log($"added {thisEnemy} to {currentGroup}");
+            }
+            //add other Enemy if not already in enemyGroup
+            else if (!currentGroup.Contains(otherEnemy))
+            {
+                currentGroup.Add(otherEnemy);
+                otherEnemy.IsGrouped = true;
+                Debug.Log($"added {otherEnemy} to {currentGroup}");
+            }
+            for (int i = 0; i < currentGroup.Count; i++)
+            {
+                Debug.Log($"Group member {i} : {currentGroup[i].name}");
+            }
         }
         agentDestination = SearchRandomWayPoint();
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (CurrentEnemyGroup != null)
+        if (currentGroup != null)
         {
-            for (int i = 0; i < CurrentEnemyGroup.Size; i++)
+            for (int i = 0; i < currentGroup.Count; i++)
             {
-                NavMeshAgent currentNavMeshAgent = CurrentEnemyGroup.GroupMembers[i].GetComponent<NavMeshAgent>();
+                NavMeshAgent currentNavMeshAgent = currentGroup[i].GetComponent<NavMeshAgent>();
                 if (currentNavMeshAgent.remainingDistance <= currentNavMeshAgent.stoppingDistance)  //Destination reached
                 {
                     agentDestination = SearchRandomWayPoint();
