@@ -25,11 +25,15 @@ public class FSM_ATTACK : FSM
 {
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Get enemy group
-        List<List<Enemy>> groups = EnemyGroups.mainGroupList;
 
         AssignAllReferences();
         UpdatePlayerPosition();
+        //Get enemy group
+        //Dictionary<List<Enemy>, int> groups = EnemyGroups.ReturnAllGroups();
+        if (true)
+        {
+
+        }
         AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
         agentDestination = playerPosition;
         navMeshAgent.SetDestination(agentDestination);

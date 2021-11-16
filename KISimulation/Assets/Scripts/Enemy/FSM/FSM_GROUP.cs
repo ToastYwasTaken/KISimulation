@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 /******************************************************************************
  * Project: KISimulation
  * File: FSM_GROUP.cs
@@ -50,21 +51,26 @@ public class FSM_GROUP : FSM
         {
             int thisEnemyNumInList = EnemyGroups.GetGroupNumberOfEnemy(thisEnemy);
             int otherEnemyNumInList = EnemyGroups.GetGroupNumberOfEnemy(otherEnemy);
-            //add this Enemy if not already in enemyGroup
-            if (!EnemyGroups.mainGroupList[thisEnemyNumInList].Contains(thisEnemy))
+            for (int i = 0; i < EnemyGroups.groupCount; i++)
             {
-                EnemyGroups.AddEnemyToCurrentList(thisEnemy);
-                thisEnemy.IsGrouped = true;
-                Debug.Log($"added {thisEnemy} to List {thisEnemyNumInList}");
+                List<Enemy> curList = EnemyGroups.GetCurrentList(i);
+                //add this Enemy if not already in enemyGroup
+                if (!curList.Contains(thisEnemy))
+                {
+                    EnemyGroups.AddEnemyToCurrentList(thisEnemy);
+                    thisEnemy.IsGrouped = true;
+                    Debug.Log($"added {thisEnemy} to List {thisEnemyNumInList}");
+                }
+                //add other Enemy if not already in enemyGroup
+                else if (!curList.Contains(otherEnemy))
+                {
+                    EnemyGroups.AddEnemyToCurrentList(otherEnemy);
+                    otherEnemy.IsGrouped = true;
+                    Debug.Log($"added {otherEnemy} to {otherEnemyNumInList}");
+                }
+                else return;
             }
-            //add other Enemy if not already in enemyGroup
-            else if (!EnemyGroups.mainGroupList[otherEnemyNumInList].Contains(otherEnemy))
-            {
-                EnemyGroups.AddEnemyToCurrentList(otherEnemy);
-                otherEnemy.IsGrouped = true;
-                Debug.Log($"added {otherEnemy} to {otherEnemyNumInList}");
-            }
-            else return;
+
             EnemyGroups.DisplayGroups();
         }
         agentDestination = SearchRandomWayPoint();
