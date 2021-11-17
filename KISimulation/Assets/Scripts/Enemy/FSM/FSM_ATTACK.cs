@@ -23,16 +23,29 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_ATTACK : FSM
 {
+    private Enemy thisEnemy;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        thisEnemy = animator.GetComponent<Enemy>();
         AssignAllReferences();
         UpdatePlayerPosition();
         //Get enemy group
-        //Dictionary<List<Enemy>, int> groups = EnemyGroups.ReturnAllGroups();
-        if (true)
+        if(EnemyGroups.groupCount > 0)
+        for (int i = 0; i < EnemyGroups.groupCount; i++)
         {
-
+            List<Enemy> currentList = EnemyGroups.GetCurrentList(i);
+                //If enemy is grouped
+                if (currentList.Contains(thisEnemy))
+                {
+                    for (int j = 0; j < currentList.Count; j++)
+                    {
+                        //change status of all other members too
+                        if(currentList[j] != thisEnemy)
+                        {
+                            currentList[j].anim.SetBool("playerSpotted", true);
+                        }
+                    }
+                }
         }
         AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
         agentDestination = playerPosition;

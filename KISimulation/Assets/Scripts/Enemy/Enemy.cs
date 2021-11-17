@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 /******************************************************************************
  * Project: KISimulation
@@ -22,6 +23,7 @@ using UnityEngine;
  *  20.10.2021  added method description
  *  30.10.2021  deleted boids added Check methods and some variables
  *              moved wayPoints assigning to own script -> calling from gameManager
+ *  17.11.2021  added health mechanics + display
  *  
  *****************************************************************************/
 public class Enemy : MonoBehaviour
@@ -31,7 +33,7 @@ public class Enemy : MonoBehaviour
 
     private Rigidbody rb;
     
-    public float ehealth = 100f;
+    private float enemyhealth;
 
     private MyGameManager gameManager;
 
@@ -43,6 +45,8 @@ public class Enemy : MonoBehaviour
     private Enemy[] otherEnemies;
     private Enemy enemyInReach;
     private bool isGrouped;  //for FSM_GROUP
+    [SerializeField]
+    private TextMeshPro debugHealth; //has still to be updated
 
     private float radiusPlayerInReach;
     private float radiusNextToOtherEnemy;
@@ -57,9 +61,10 @@ public class Enemy : MonoBehaviour
     private bool evading;
     #endregion
 
-    public Vector3 Velocity { get => rb.velocity; }
+    //public Vector3 Velocity { get => rb.velocity; }
     public bool IsGrouped { get => isGrouped; set => isGrouped = value; }
     public Enemy EnemyInReach { get => enemyInReach; set => enemyInReach = value; }
+    public float Enemyhealth { get => enemyhealth; set => enemyhealth = value; }
 
     private void Awake()
     {
@@ -72,6 +77,9 @@ public class Enemy : MonoBehaviour
         radiusNextToOtherEnemy = gameManager.RadiusNextToOtherEnemy;
         playerSpottedAngle = gameManager.PlayerSpottedAngle;
         playerSpottingDistance = gameManager.PlayerSpottingDistance;
+        Enemyhealth = 100f;
+        debugHealth = GetComponentInChildren<TextMeshPro>();
+        debugHealth.text = enemyhealth.ToString();
         SetFSM_IDLE();
 
         //Set Rigidbody
@@ -173,7 +181,7 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void CheckForGettingHit()
     {
-        if(this.ehealth <= 50)
+        if(Enemyhealth <= 50)
         {
             Debug.Log("Evading");
             attacking = false;
@@ -259,6 +267,11 @@ public class Enemy : MonoBehaviour
     }
     #endregion
 
+    public void UpdateEnemyHealth()
+    {
+        debugHealth.text = enemyhealth.ToString();
+    }
+
     private void OnDrawGizmos()
     {
         //DEBUG: shows player spotting mechanism
@@ -267,4 +280,13 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawLine(this.transform.position, this.transform.position + this.transform.forward * 2);
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.tag.Equals("Player"))
+        {
+            Debug.Log("enemy attacked player");
+            playerRef.PlayerHealth -= 50f;
+            playerRef.UpdatePlayerHealth();
+        }
+    }
 }

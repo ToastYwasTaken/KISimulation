@@ -20,6 +20,7 @@ using System.Linq;
  *  06.11.2021  created as helper-class for grouping mechanism
  *  15.11.2021  re-considered functionability to make this class hold all lists of enemygroups
  *  16.11.2021  added methods | TODO: update access modifiers
+ *  17.11.2021  updated access modifiers, added comments
  *  
  *****************************************************************************/
 public static class EnemyGroups
@@ -30,6 +31,10 @@ public static class EnemyGroups
     public static List<Enemy> subGroupList = new List<Enemy>();
     public static int enemyCount = 0;
 
+    /// <summary>
+    /// Add a list of enemys to the mainGroupList
+    /// </summary>
+    /// <param name="_groupToSave">List of the group to save</param>
     public static void AddCurrentGroupToAllGroups(List<Enemy> _groupToSave)
     {
         mainGroupList.Add(_groupToSave, groupCount);
@@ -37,12 +42,21 @@ public static class EnemyGroups
         groupCount++;
     }
 
+    /// <summary>
+    /// Adds an enemy to the list
+    /// </summary>
+    /// <param name="_enemy">An enemy object</param>
     public static void AddEnemyToCurrentList(Enemy _enemy)
     {
         subGroupList.Add(_enemy);
         enemyCount++;
     }
 
+    /// <summary>
+    /// Returns the count of a certain enemy within a list
+    /// </summary>
+    /// <param name="_enemy">the enemy whose position in the list is to be determined</param>
+    /// <returns>int count</returns>
     public static int GetGroupNumberOfEnemy(Enemy _enemy)
     {
         int count = 0;
@@ -73,13 +87,24 @@ public static class EnemyGroups
         }
     }
 
+    /// <summary>
+    /// Returns the list in the dictionary at a certain value
+    /// </summary>
+    /// <param name="_groupCountOfList">value of the list in the dictionary</param>
+    /// <returns>List<Enemy> an enemy list</Enemy></returns>
     public static List<Enemy> GetCurrentList(int _groupCountOfList)
     {
         return mainGroupList.FirstOrDefault(x => x.Value == _groupCountOfList).Key;
     }
 
-    //private?
-    public static Enemy GetCurrentEnemy(int _groupCountOfList ,int _enemyCountInList)
+    /// <summary>
+    /// Searches for an enemy at a certain value in the dictionary
+    /// at a certain position in the list
+    /// </summary>
+    /// <param name="_groupCountOfList">position in dictionary</param>
+    /// <param name="_enemyCountInList">position in list</param>
+    /// <returns>Enemy enemy</returns>
+    private static Enemy GetCurrentEnemy(int _groupCountOfList ,int _enemyCountInList)
     {
         List<Enemy> curList = GetCurrentList(_groupCountOfList);
         return curList[_enemyCountInList];

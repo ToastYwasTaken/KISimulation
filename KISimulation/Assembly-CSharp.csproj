@@ -59,7 +59,6 @@
     <Compile Include="Assets\Scripts\Enemy\Spawning\ObstacleSpace.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_ATTACK.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_GROUP.cs" />
-    <Compile Include="Assets\Scripts\Attacking.cs" />
     <Compile Include="Assets\Scripts\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\FSM\FSM_IDLE.cs" />
     <Compile Include="Assets\Scripts\Enemy\Spawning\Ground.cs" />
@@ -73,6 +72,8 @@
     <Compile Include="Assets\Scripts\Enemy\EnemyGroups.cs" />
     <Compile Include="Assets\Scripts\MyGameManager.cs" />
     <Compile Include="Assets\Scripts\WayPoints.cs" />
+    <Compile Include="Assets\Scripts\DeathScene.cs" />
+    <Compile Include="Assets\Scripts\MySceneManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

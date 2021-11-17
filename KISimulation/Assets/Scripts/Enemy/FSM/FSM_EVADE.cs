@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 /******************************************************************************
  * Project: KISimulation
  * File: FSM_EVADE.cs
@@ -17,37 +18,61 @@ using UnityEngine;
  * ChangeLog
  * ----------------------------
  *  07.10.2021  created
+ *  17.11.2021  implemented
  *  
  *****************************************************************************/
-public class FSM_EVADE : StateMachineBehaviour
+public class FSM_EVADE : FSM
 {
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    private Enemy thisEnemy;
+    private float sqrDistance;
+    private float minDistanceToEvadeSuccessfully = 100f; //to tweak
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        thisEnemy = animator.GetComponent<Enemy>();
+        AssignAllReferences();
+        UpdatePlayerPosition();
+        //Get enemy group
+        if (EnemyGroups.groupCount > 0)
+            for (int i = 0; i < EnemyGroups.groupCount; i++)
+            {
+                List<Enemy> currentList = EnemyGroups.GetCurrentList(i);
+                //If enemy is grouped
+                if (currentList.Contains(thisEnemy))
+                {
+                    for (int j = 0; j < currentList.Count; j++)
+                    {
+                        //change status of all other members too
+                        if (currentList[j] != thisEnemy)
+                        {
+                            currentList[j].anim.SetBool("gettingHit", true);
+                        }
+                    }
+                }
+            }
+        AssignNavMeshAgent(animator.GetComponent<NavMeshAgent>());
+        //evade
+        agentDestination = SearchPositionToEvade();
+        navMeshAgent.SetDestination(agentDestination);
+    }
 
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        UpdatePlayerPosition();
+        //evade until distance between player and enemy is enough
+        float lesser = Mathf.Min(animator.transform.position.sqrMagnitude, playerPosition.sqrMagnitude);
+        float bigger = Mathf.Max(animator.transform.position.sqrMagnitude, playerPosition.sqrMagnitude);
+        sqrDistance = bigger - lesser;
+        //not evaded yet
+        if(sqrDistance < minDistanceToEvadeSuccessfully)
+        {
+            if (DestinationReached())
+            {
+                //evade
+                agentDestination = SearchPositionToEvade();
+                navMeshAgent.SetDestination(agentDestination);
+            }
+            navMeshAgent.SetDestination(agentDestination);
+        }
+    }
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }

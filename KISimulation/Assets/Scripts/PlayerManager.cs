@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 /******************************************************************************
@@ -21,6 +22,7 @@ using UnityEngine;
  *  23.10.2021  added method description
  *  02.11.2021  added Attack mechanic
  *  09.11.2021  removed character controller, added movement via animation
+ *  17.22.2021  added health mechanics + display
  *  
  *****************************************************************************/
 public class PlayerManager : MonoBehaviour
@@ -28,15 +30,23 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     float playerSpeed;
 
-    private CharacterController characterController;
+    private float playerHealth;
+    [SerializeField]
+    private TextMeshPro debugHealth; //update when getting hit
 
-    #region Rotation
+    private CharacterController characterController;
+    private const float gravityConstant = -9.81f;
+
     private Vector3 playerPos;
     private Vector3 mousePos;
-    #endregion
+
+    public float PlayerHealth { get => playerHealth; set => playerHealth = value; }
+
 
     void Awake()
     {
+        playerHealth = 100f;
+        debugHealth.text = PlayerHealth.ToString();
         playerPos = transform.position;
         characterController = this.GetComponent<CharacterController>();
     }
@@ -55,8 +65,12 @@ public class PlayerManager : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+        Vector3 fallDrag = Vector3.zero;
         Vector3 direction = transform.right * horizontal + transform.forward * vertical;
         characterController.Move(direction * playerSpeed * Time.deltaTime);
+        //calculate drag so the player doesn't fly
+        fallDrag.y = gravityConstant * Time.deltaTime;
+        characterController.Move(fallDrag);
     }
 
     /// <summary>
@@ -82,6 +96,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void UpdatePlayerHealth()
+    {
+        debugHealth.text = playerHealth.ToString();
+    }
 
     private void OnDrawGizmos()
     {

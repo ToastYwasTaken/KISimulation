@@ -24,7 +24,6 @@ using UnityEngine.AI;
  *****************************************************************************/
 public class FSM_IDLE : FSM
 {
-    //TODO Add intermediate state with exitTime as extra node
     //private MonoBehaviour monoSurrogate;
     private float desiredRotationY;
     private float currentRotationY;
@@ -34,9 +33,6 @@ public class FSM_IDLE : FSM
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //Get enemy group
-        Dictionary<List<Enemy>, int> groups = EnemyGroups.mainGroupList;
-
         //Get a MonoBehaviour in scene
         //monoSurrogate = GameObject.FindGameObjectWithTag("Enemy").GetComponent<MonoBehaviour>();
         SetRotationAndMultiplier();

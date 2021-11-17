@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -86,9 +87,18 @@ public class FSM : StateMachineBehaviour
     protected Vector3 SearchRandomWayPoint()
     {
         wayPointsAmount = wayPoints.wayPoints.Length;
-        int randomCount = Random.Range(0, wayPointsAmount);
+        int randomCount = UnityEngine.Random.Range(0, wayPointsAmount);
         Vector3 randomWayPoint = wayPoints.wayPoints[randomCount];
         return randomWayPoint;
+    }
+
+    /// <summary>
+    /// Searches a destination for the enemy to evade from the player
+    /// </summary>
+    /// <returns>the desired position</returns>
+    protected Vector3 SearchPositionToEvade()
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>

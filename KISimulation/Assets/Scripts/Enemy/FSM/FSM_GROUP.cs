@@ -70,15 +70,15 @@ public class FSM_GROUP : FSM
                 }
                 else return;
             }
-
-            EnemyGroups.DisplayGroups();
+            //DEBUG
+            //EnemyGroups.DisplayGroups();
         }
         agentDestination = SearchRandomWayPoint();
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //TODO: individually update destinations
+        //Update the destination of all agents
         if (EnemyGroups.mainGroupList != null)
         {
             for (int i = 0; i < EnemyGroups.enemyCount; i++)
